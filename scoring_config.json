@@ -1,0 +1,481 @@
+{
+  "_meta": {
+    "version": "2.0",
+    "description": "主线赛道五维量化打分系统",
+    "totalPoints": 100,
+    "weights": {
+      "supply": 0.25,
+      "order": 0.25,
+      "profit": 0.2,
+      "policy": 0.15,
+      "fund": 0.15
+    },
+    "updateCycle": "weekly",
+    "lastUpdated": "2026-05-30"
+  },
+  "bonus": {
+    "chain_position": {
+      "upstream_core": 5,
+      "midstream": 0,
+      "downstream_app": -5
+    },
+    "risk_deduction": {
+      "policy_risk": {
+        "high": -10,
+        "medium": -5,
+        "none": 0
+      },
+      "valuation_bubble": {
+        "pe_gt_60": -10,
+        "pe_40_60": -5,
+        "pe_lt_40": 0
+      }
+    }
+  },
+  "threads": [
+    {
+      "id": "ai_compute",
+      "name": "AI算力配套",
+      "codes": [
+        "sz300308",
+        "sh601138",
+        "sz000977",
+        "sh600255"
+      ],
+      "chain_position": "upstream_core",
+      "policy_risk": "medium",
+      "supply": {
+        "gap_rate": 42,
+        "order_backlog_months": 16,
+        "spot_price_mom_pct": 8.5,
+        "_notes": "VR200量产拉动，高端铜箔/PCB供需缺口42%"
+      },
+      "order": {
+        "order_revenue_ratio": 2.8,
+        "top5_concentration_pct": 55,
+        "overseas_revenue_pct": 45,
+        "_notes": "在手订单/去年营收约2.8x，客户分散度良好"
+      },
+      "profit": {
+        "net_profit_growth_pct": 85,
+        "peg_ratio": 0.8,
+        "earnings_surprise_pct": 15,
+        "_notes": "2026E净利润同比+85%，PEG约0.8"
+      },
+      "policy": {
+        "national_strategy": true,
+        "industry_fund": true,
+        "localization_gap_pct": 80,
+        "_notes": "十五五重点产业，国家大基金三期覆盖，国产化率仅20%"
+      },
+      "fund": {
+        "northbound_monthly_pct": 1.8,
+        "mutual_fund_qoq_pct": 2.2,
+        "etf_growth_monthly_pct": 12,
+        "_notes": "北向近1月净流入占流通市值1.8%"
+      },
+      "stocks": [
+        {
+          "code": "300308",
+          "market": "0",
+          "name": "中际旭创",
+          "sector": "光模块"
+        },
+        {
+          "code": "601138",
+          "market": "1",
+          "name": "工业富联",
+          "sector": "服务器整机"
+        },
+        {
+          "code": "000977",
+          "market": "0",
+          "name": "浪潮信息",
+          "sector": "服务器整机"
+        },
+        {
+          "code": "600255",
+          "market": "1",
+          "name": "鑫科材料",
+          "sector": "高端铜箔"
+        }
+      ]
+    },
+    {
+      "id": "storage",
+      "name": "存储芯片",
+      "codes": [
+        "sz002916",
+        "sh603986",
+        "sh688525"
+      ],
+      "chain_position": "upstream_core",
+      "policy_risk": "medium",
+      "supply": {
+        "gap_rate": 30,
+        "order_backlog_months": 14,
+        "spot_price_mom_pct": 6.0,
+        "_notes": "DDR5/HBM供给紧张，缺口约30%"
+      },
+      "order": {
+        "order_revenue_ratio": 2.2,
+        "top5_concentration_pct": 60,
+        "overseas_revenue_pct": 40,
+        "_notes": "AI服务器存储需求8x增长"
+      },
+      "profit": {
+        "net_profit_growth_pct": 65,
+        "peg_ratio": 1.1,
+        "earnings_surprise_pct": 8,
+        "_notes": "存储涨价周期，业绩持续超预期"
+      },
+      "policy": {
+        "national_strategy": true,
+        "industry_fund": true,
+        "localization_gap_pct": 70,
+        "_notes": "存储国产化率约30%，大基金重点支持"
+      },
+      "fund": {
+        "northbound_monthly_pct": 1.2,
+        "mutual_fund_qoq_pct": 1.5,
+        "etf_growth_monthly_pct": 8,
+        "_notes": "机构持续加仓存储板块"
+      },
+      "stocks": [
+        {
+          "code": "002916",
+          "market": "0",
+          "name": "深南电路",
+          "sector": "PCB"
+        },
+        {
+          "code": "603986",
+          "market": "1",
+          "name": "兆易创新",
+          "sector": "存储"
+        },
+        {
+          "code": "688525",
+          "market": "1",
+          "name": "佰维存储",
+          "sector": "存储"
+        }
+      ]
+    },
+    {
+      "id": "optical",
+      "name": "光芯片/光模块",
+      "codes": [
+        "sz300308",
+        "sz300502",
+        "sz300394"
+      ],
+      "chain_position": "upstream_core",
+      "policy_risk": "low",
+      "supply": {
+        "gap_rate": 25,
+        "order_backlog_months": 10,
+        "spot_price_mom_pct": 4.0,
+        "_notes": "1.6T光模块需求旺盛，供给偏紧"
+      },
+      "order": {
+        "order_revenue_ratio": 1.8,
+        "top5_concentration_pct": 65,
+        "overseas_revenue_pct": 55,
+        "_notes": "海外大客户占比高，绑定NV/Google"
+      },
+      "profit": {
+        "net_profit_growth_pct": 55,
+        "peg_ratio": 1.3,
+        "earnings_surprise_pct": 5,
+        "_notes": "增速放缓但仍高于行业平均"
+      },
+      "policy": {
+        "national_strategy": true,
+        "industry_fund": false,
+        "localization_gap_pct": 40,
+        "_notes": "光芯片国产化率约60%"
+      },
+      "fund": {
+        "northbound_monthly_pct": 0.5,
+        "mutual_fund_qoq_pct": -0.8,
+        "etf_growth_monthly_pct": 3,
+        "_notes": "资金有所分歧，ETF份额增速放缓"
+      },
+      "stocks": [
+        {
+          "code": "300308",
+          "market": "0",
+          "name": "中际旭创",
+          "sector": "光模块"
+        },
+        {
+          "code": "300502",
+          "market": "0",
+          "name": "新易盛",
+          "sector": "光模块"
+        },
+        {
+          "code": "300394",
+          "market": "0",
+          "name": "天孚通信",
+          "sector": "光器件"
+        }
+      ]
+    },
+    {
+      "id": "equipment",
+      "name": "国产半导体设备",
+      "codes": [
+        "sz002371",
+        "sh688012",
+        "sh688072"
+      ],
+      "chain_position": "upstream_core",
+      "policy_risk": "high",
+      "supply": {
+        "gap_rate": 20,
+        "order_backlog_months": 20,
+        "spot_price_mom_pct": 2.0,
+        "_notes": "国产替代加速，在手订单饱满"
+      },
+      "order": {
+        "order_revenue_ratio": 2.5,
+        "top5_concentration_pct": 75,
+        "overseas_revenue_pct": 15,
+        "_notes": "客户集中度偏高，海外收入占比低"
+      },
+      "profit": {
+        "net_profit_growth_pct": 45,
+        "peg_ratio": 1.8,
+        "earnings_surprise_pct": 3,
+        "_notes": "增速稳健，估值略高"
+      },
+      "policy": {
+        "national_strategy": true,
+        "industry_fund": true,
+        "localization_gap_pct": 85,
+        "_notes": "国产化空间最大，政策强力支持但美国制裁风险高"
+      },
+      "fund": {
+        "northbound_monthly_pct": -0.5,
+        "mutual_fund_qoq_pct": 0.8,
+        "etf_growth_monthly_pct": -2,
+        "_notes": "北向因制裁担忧流出"
+      },
+      "stocks": [
+        {
+          "code": "002371",
+          "market": "0",
+          "name": "北方华创",
+          "sector": "设备"
+        },
+        {
+          "code": "688012",
+          "market": "1",
+          "name": "中微公司",
+          "sector": "设备"
+        },
+        {
+          "code": "688072",
+          "market": "1",
+          "name": "拓荆科技",
+          "sector": "设备"
+        }
+      ]
+    },
+    {
+      "id": "huawei",
+      "name": "华为昇腾产业链",
+      "codes": [
+        "sz002230",
+        "sz300474",
+        "sh688041"
+      ],
+      "chain_position": "midstream",
+      "policy_risk": "medium",
+      "supply": {
+        "gap_rate": 18,
+        "order_backlog_months": 8,
+        "spot_price_mom_pct": 3.0,
+        "_notes": "华为昇腾出货量增长，配套需求上升"
+      },
+      "order": {
+        "order_revenue_ratio": 1.5,
+        "top5_concentration_pct": 80,
+        "overseas_revenue_pct": 10,
+        "_notes": "依赖华为单一客户，海外收入有限"
+      },
+      "profit": {
+        "net_profit_growth_pct": 40,
+        "peg_ratio": 2.1,
+        "earnings_surprise_pct": -5,
+        "_notes": "部分公司最新财报略低于预期"
+      },
+      "policy": {
+        "national_strategy": true,
+        "industry_fund": false,
+        "localization_gap_pct": 55,
+        "_notes": "国产算力替代方向，但非国家级基金重点"
+      },
+      "fund": {
+        "northbound_monthly_pct": 0.2,
+        "mutual_fund_qoq_pct": -0.5,
+        "etf_growth_monthly_pct": 1,
+        "_notes": "资金关注度一般"
+      },
+      "stocks": [
+        {
+          "code": "002230",
+          "market": "0",
+          "name": "科大讯飞",
+          "sector": "AI应用"
+        },
+        {
+          "code": "300474",
+          "market": "0",
+          "name": "景嘉微",
+          "sector": "GPU"
+        },
+        {
+          "code": "688041",
+          "market": "1",
+          "name": "海光信息",
+          "sector": "CPU"
+        }
+      ]
+    }
+  ],
+  "subSegments": {
+    "AI算力配套": [
+      {
+        "name": "服务器整机",
+        "en": "Server Assembly",
+        "reason": "云厂商大单最先锁定营收，业绩最先兑现，但毛利率偏低",
+        "reasonEn": "Cloud vendor orders lock revenue first, earnings materialize earliest but margins low"
+      },
+      {
+        "name": "高速PCB",
+        "en": "High-Speed PCB",
+        "reason": "整机订单后3-6个月下达PCB采购，技术壁垒与盈利弹性优于整机",
+        "reasonEn": "PCB orders follow server assembly by 3-6 months, better tech barriers and profit elasticity"
+      },
+      {
+        "name": "AI高端铜箔",
+        "en": "AI Copper Foil",
+        "reason": "PCB量产后方才采购铜箔，需求传导滞后但价格弹性全链最优",
+        "reasonEn": "Copper foil ordered after PCB production, delayed demand but best pricing power"
+      },
+      {
+        "name": "液冷散热",
+        "en": "Liquid Cooling",
+        "reason": "服务器装配收尾环节，渗透率缓慢提升，放量节奏最滞后",
+        "reasonEn": "Final assembly stage, slow penetration ramp, latest volume release"
+      }
+    ],
+    "存储芯片": [
+      {
+        "name": "HBM封装测试",
+        "en": "HBM Packaging",
+        "reason": "AI芯片需求爆发，先进封装产能最先满载，业绩弹性最大",
+        "reasonEn": "AI chip demand surge drives advanced packaging to full capacity first, highest earnings elasticity"
+      },
+      {
+        "name": "DDR5内存接口芯片",
+        "en": "DDR5 Interface Chips",
+        "reason": "服务器平台切换驱动，量价齐升，订单能见度高",
+        "reasonEn": "Server platform transition drives volume and price growth, high order visibility"
+      },
+      {
+        "name": "存储模组",
+        "en": "Storage Modules",
+        "reason": "原厂涨价传导至模组，库存收益兑现，但节奏滞后于芯片",
+        "reasonEn": "Price hikes pass through to modules, inventory gains realized but lag chips"
+      },
+      {
+        "name": "存储晶圆制造",
+        "en": "Storage Wafer Fab",
+        "reason": "扩产周期长，设备调试慢，业绩释放最晚且受制于良率",
+        "reasonEn": "Long expansion cycle, slow equipment ramp, latest earnings release constrained by yields"
+      }
+    ],
+    "光芯片/光模块": [
+      {
+        "name": "800G光模块",
+        "en": "800G Optical Modules",
+        "reason": "云厂商直接采购，订单锁定最快，营收率先落地",
+        "reasonEn": "Direct cloud vendor procurement, fastest order lock-in, revenue materializes first"
+      },
+      {
+        "name": "高速光芯片",
+        "en": "High-Speed Optical Chips",
+        "reason": "模块需求拉动芯片备货，产能瓶颈推升盈利",
+        "reasonEn": "Module demand pulls chip inventory build, capacity bottleneck boosts profitability"
+      },
+      {
+        "name": "光器件/组件",
+        "en": "Optical Components",
+        "reason": "模块组装前采购，交付周期短，但竞争激烈",
+        "reasonEn": "Pre-assembly procurement, short delivery cycle but intense competition"
+      },
+      {
+        "name": "光纤连接器/MPO",
+        "en": "Fiber Connectors",
+        "reason": "模块部署后配套布线，需求滞后且单价低，放量最慢",
+        "reasonEn": "Post-deployment cabling, lagging demand with low unit price, slowest volume ramp"
+      }
+    ],
+    "国产半导体设备": [
+      {
+        "name": "刻蚀/薄膜沉积设备",
+        "en": "Etch/Deposition Equipment",
+        "reason": "晶圆厂扩产核心环节，订单排产最优先，营收确认快",
+        "reasonEn": "Core wafer fab expansion segment, prioritized order scheduling, fast revenue recognition"
+      },
+      {
+        "name": "清洗/涂胶显影设备",
+        "en": "Clean/Track Equipment",
+        "reason": "配套核心工艺，交付周期短，但受制于整线进度",
+        "reasonEn": "Supporting core processes, short delivery but constrained by line integration"
+      },
+      {
+        "name": "测试/分选设备",
+        "en": "Test/Sort Equipment",
+        "reason": "芯片量产后方需采购，验证周期长，业绩滞后于前道",
+        "reasonEn": "Procured after chip production, long qualification cycle, earnings lag front-end tools"
+      },
+      {
+        "name": "离子注入/量测设备",
+        "en": "Implant/Metrology Equipment",
+        "reason": "技术壁垒高，国产替代最慢，放量节奏最靠后",
+        "reasonEn": "Highest tech barrier, slowest domestic substitution, latest volume ramp"
+      }
+    ],
+    "华为昇腾产业链": [
+      {
+        "name": "昇腾AI服务器整机",
+        "en": "Ascend AI Servers",
+        "reason": "华为直接出货给运营商/互联网，订单集中，营收最先",
+        "reasonEn": "Huawei direct shipment to telcos/internet, concentrated orders, revenue first"
+      },
+      {
+        "name": "服务器电源/散热模组",
+        "en": "Power/Cooling Modules",
+        "reason": "整机配套采购，技术门槛低但量随服务器同步增长",
+        "reasonEn": "Supporting procurement, low tech barrier but volume grows with servers"
+      },
+      {
+        "name": "高速连接器/PCB",
+        "en": "Connectors/PCB",
+        "reason": "服务器量产后方有批量订单，国产替代加速但验证周期长",
+        "reasonEn": "Batch orders after server production, domestic substitution accelerates but long qualification"
+      },
+      {
+        "name": "国产AI芯片封测",
+        "en": "AI Chip Packaging",
+        "reason": "昇腾芯片自给率提升缓慢，封测产能利用率滞后于整机",
+        "reasonEn": "Ascend chip self-sufficiency improves slowly, packaging utilization lags server assembly"
+      }
+    ]
+  }
+}

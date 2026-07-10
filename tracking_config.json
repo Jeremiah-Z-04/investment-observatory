@@ -1,0 +1,306 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "updated": "2026-05-30",
+    "description": "AI算力产业链核心跟踪数据 - 每周更新",
+    "dataSources": {
+      "nvidia_revenue": "英伟达财报/彭博一致预期",
+      "cloud_capex": "微软/谷歌/亚马逊/ Meta 财报",
+      "hbm_price": "DRAMeXchange / TrendForce",
+      "optical_backlog": "中际旭创/新易盛/天孚通信 季报",
+      "ai_server_shipment": "IDC / TrendForce / 工业富联 月报",
+      "northbound": "东方财富 沪深港通",
+      "etf_flow": "东方财富 ETF数据"
+    }
+  },
+  "globalSwitches": [
+    {
+      "id": "nvidia_rev",
+      "name": "英伟达季度营收及下季指引",
+      "nameEn": "NVIDIA Quarterly Revenue & Guidance",
+      "currentValue": "Q1 FY2027 营收 520亿$，同比+78%，下季指引 550亿$",
+      "status": "normal",
+      "lastUpdate": "2026-05-28",
+      "source": "NVIDIA FY2027 Q1 Earnings Call"
+    },
+    {
+      "id": "cloud_capex",
+      "name": "全球头部云厂商资本开支合计",
+      "nameEn": "Global Cloud Capex Total",
+      "currentValue": "2026Q1 合计约 820亿$，同比+45%（微软+55%/谷歌+48%/亚马逊+35%）",
+      "status": "normal",
+      "lastUpdate": "2026-05-25",
+      "source": "各家云厂商Q1财报"
+    },
+    {
+      "id": "hbm_price",
+      "name": "HBM现货价格",
+      "nameEn": "HBM Spot Price",
+      "currentValue": "HBM3e 12Hi 合约价 Q2环比+8%，现货溢价约15%",
+      "status": "normal",
+      "lastUpdate": "2026-05-26",
+      "source": "TrendForce / DRAMeXchange"
+    },
+    {
+      "id": "optical_backlog",
+      "name": "高端光模块订单排期",
+      "nameEn": "High-end Optical Module Backlog",
+      "currentValue": "1.6T 光模块在手订单排至2027Q1，中际旭创/新易盛产能满载",
+      "status": "normal",
+      "lastUpdate": "2026-05-25",
+      "source": "中际旭创/新易盛 投资者交流"
+    },
+    {
+      "id": "ai_server_shipment",
+      "name": "AI服务器出货量同比增速",
+      "nameEn": "AI Server Shipment YoY Growth",
+      "currentValue": "2026Q1 全球AI服务器出货同比+62%，工业富联AI服务器收入+85%",
+      "status": "normal",
+      "lastUpdate": "2026-05-28",
+      "source": "IDC / 工业富联Q1财报"
+    }
+  ],
+  "segments": [
+    {
+      "id": "storage",
+      "name": "存储芯片环节",
+      "nameEn": "Storage Chips",
+      "indicators": [
+        {
+          "id": "ddr5_price",
+          "name": "DDR5服务器合约价",
+          "nameEn": "DDR5 Server Contract Price",
+          "currentValue": "Q2合约价环比+5%，64GB RDIMM $320",
+          "status": "normal",
+          "lastUpdate": "2026-05-26",
+          "source": "DRAMeXchange"
+        },
+        {
+          "id": "hbm_local",
+          "name": "国产HBM量产进度",
+          "nameEn": "Domestic HBM Production",
+          "currentValue": "长鑫存储HBM2e送样验证中，预计Q3小批量",
+          "status": "warning",
+          "lastUpdate": "2026-05-20",
+          "source": "产业链调研"
+        },
+        {
+          "id": "storage_util",
+          "name": "全球存储龙头产能利用率",
+          "nameEn": "Global Storage Leader Utilization",
+          "currentValue": "三星/海力士 HBM产线满载，DDR5产线利用率约95%",
+          "status": "normal",
+          "lastUpdate": "2026-05-26",
+          "source": "TrendForce"
+        }
+      ]
+    },
+    {
+      "id": "server_acc",
+      "name": "AI服务器配套环节",
+      "nameEn": "AI Server Accessories",
+      "indicators": [
+        {
+          "id": "copper_foil",
+          "name": "高端铜箔良率及供需",
+          "nameEn": "High-end Copper Foil Yield",
+          "currentValue": "HVLP4铜箔良率约55%，供需缺口约30%，鑫科材料Q2产能+20%",
+          "status": "normal",
+          "lastUpdate": "2026-05-25",
+          "source": "鑫科材料/建滔积层板 调研"
+        },
+        {
+          "id": "pcb_backlog",
+          "name": "高阶PCB订单排期",
+          "nameEn": "High-end PCB Backlog",
+          "currentValue": "AI服务器PCB排期约8个月，超声电子/鹏鼎控股产能利用率95%",
+          "status": "normal",
+          "lastUpdate": "2026-05-25",
+          "source": "超声电子/鹏鼎控股 季报"
+        },
+        {
+          "id": "liquid_cooling",
+          "name": "液冷渗透率",
+          "nameEn": "Liquid Cooling Penetration",
+          "currentValue": "新建AI数据中心液冷渗透率约40%，较2025年的25%大幅提升",
+          "status": "normal",
+          "lastUpdate": "2026-05-28",
+          "source": "IDC / 英维克 调研"
+        }
+      ]
+    },
+    {
+      "id": "optical_chip",
+      "name": "光芯片/光模块环节",
+      "nameEn": "Optical Chips / Modules",
+      "indicators": [
+        {
+          "id": "optical_price",
+          "name": "高端光芯片价格",
+          "nameEn": "High-end Optical Chip Price",
+          "currentValue": "100G EML芯片单价$45，环比+5%，供给持续紧张",
+          "status": "normal",
+          "lastUpdate": "2026-05-25",
+          "source": "LightCounting / 源杰科技"
+        },
+        {
+          "id": "optical_margin",
+          "name": "高端光模块毛利率",
+          "nameEn": "High-end Optical Module Margin",
+          "currentValue": "中际旭创800G毛利率约35%，1.6T预计38%+",
+          "status": "normal",
+          "lastUpdate": "2026-05-25",
+          "source": "中际旭创 季报"
+        },
+        {
+          "id": "next_gen_sample",
+          "name": "下一代光模块送样进度",
+          "nameEn": "Next-gen Optical Module Sampling",
+          "currentValue": "3.2T光模块研发中，预计2027H1送样，技术路线LPO/CPO并行",
+          "status": "normal",
+          "lastUpdate": "2026-05-20",
+          "source": "OFC 2026 / 产业调研"
+        }
+      ]
+    },
+    {
+      "id": "ai_server_domestic",
+      "name": "AI服务器整机（国产）",
+      "nameEn": "AI Server (Domestic)",
+      "indicators": [
+        {
+          "id": "domestic_shipment",
+          "name": "国产AI服务器出货量",
+          "nameEn": "Domestic AI Server Shipments",
+          "currentValue": "2026Q1 华为昇腾+寒武纪合计出货约8万台，同比+120%",
+          "status": "normal",
+          "lastUpdate": "2026-05-28",
+          "source": "IDC中国 / 产业链调研"
+        },
+        {
+          "id": "domestic_chip_util",
+          "name": "国产AI芯片产能利用率",
+          "nameEn": "Domestic AI Chip Utilization",
+          "currentValue": "华为昇腾910B/寒武纪思元590产线满载，7nm产能受限",
+          "status": "warning",
+          "lastUpdate": "2026-05-25",
+          "source": "产业链调研"
+        }
+      ]
+    }
+  ],
+  "techIteration": [
+    {
+      "stage": "芯片交付阶段",
+      "stageEn": "Chip Delivery",
+      "currentStatus": "英伟达VR200已向超算客户交付首批芯片，GB300预计Q3送样",
+      "expectedDate": "2026年6月",
+      "status": "onTrack",
+      "lastUpdate": "2026-05-28",
+      "source": "英伟达GTC 2026"
+    },
+    {
+      "stage": "试产阶段",
+      "stageEn": "Sampling Phase",
+      "currentStatus": "1.6T光模块批量出货，中际旭创月产能突破50万只",
+      "expectedDate": "2026年Q2-Q3",
+      "status": "onTrack",
+      "lastUpdate": "2026-05-25",
+      "source": "中际旭创 公告"
+    },
+    {
+      "stage": "大规模量产阶段",
+      "stageEn": "Mass Production",
+      "currentStatus": "HBM3e 12Hi 大规模量产中，三星/海力士月产能约10万片",
+      "expectedDate": "2026年Q3",
+      "status": "onTrack",
+      "lastUpdate": "2026-05-26",
+      "source": "TrendForce"
+    },
+    {
+      "stage": "下一年订单指引",
+      "stageEn": "Next Year Guidance",
+      "currentStatus": "台积电CoWoS产能2027年预计翻倍至月产8万片",
+      "expectedDate": "2026年Q4",
+      "status": "onTrack",
+      "lastUpdate": "2026-05-28",
+      "source": "台积电 法说会"
+    }
+  ],
+  "fundFlow": [
+    {
+      "id": "northbound_tech",
+      "name": "北向资金科技板块流向",
+      "nameEn": "Northbound Tech Flow",
+      "currentValue": "近1月科技板块北向净流入约85亿，其中电子+45亿/计算机+25亿",
+      "status": "normal",
+      "lastUpdate": "2026-05-30",
+      "source": "东方财富 沪深港通"
+    },
+    {
+      "id": "tech_volume",
+      "name": "科技板块成交额占比",
+      "nameEn": "Tech Trading Volume %",
+      "currentValue": "电子+计算机+通信占两市成交约28%，处于近3年65%分位",
+      "status": "normal",
+      "lastUpdate": "2026-05-30",
+      "source": "东方财富 行情数据"
+    },
+    {
+      "id": "etf_share",
+      "name": "算力ETF份额变化",
+      "nameEn": "Computing ETF Share Change",
+      "currentValue": "科创AI ETF(588790)近1月份额+12%，资金持续流入",
+      "status": "normal",
+      "lastUpdate": "2026-05-30",
+      "source": "东方财富 ETF数据"
+    }
+  ],
+  "systemicRisks": [
+    {
+      "id": "risk_export",
+      "name": "美国半导体出口限制",
+      "nameEn": "US Semiconductor Export Restrictions",
+      "currentStatus": "美国正在审议新一轮AI芯片出口管制，可能限制7nm以下芯片对华出口",
+      "status": "warning",
+      "lastUpdate": "2026-05-29",
+      "source": "路透社/彭博"
+    },
+    {
+      "id": "risk_delay",
+      "name": "VR200量产进度",
+      "nameEn": "VR200 Mass Production Timeline",
+      "currentStatus": "目前按计划推进，台积电4nm产能保障充足",
+      "status": "normal",
+      "lastUpdate": "2026-05-28",
+      "source": "英伟达/台积电"
+    },
+    {
+      "id": "risk_capex_cut",
+      "name": "云厂商资本开支下调",
+      "nameEn": "Cloud Capex Cut",
+      "currentStatus": "目前无主要云厂商下调指引，微软/谷歌均强调AI投入持续增长",
+      "status": "normal",
+      "lastUpdate": "2026-05-25",
+      "source": "各家云厂商Q1财报"
+    },
+    {
+      "id": "risk_price_decline",
+      "name": "核心产品价格下跌",
+      "nameEn": "Core Product Price Decline",
+      "currentStatus": "存储/光模块/PCB价格均处于上行或持平通道",
+      "status": "normal",
+      "lastUpdate": "2026-05-30",
+      "source": "DRAMeXchange / 产业调研"
+    },
+    {
+      "id": "risk_extreme_volume",
+      "name": "板块成交极端化",
+      "nameEn": "Extreme Sector Volume",
+      "currentStatus": "科技板块成交占比28%，处于正常偏高区间，未到极端水平",
+      "status": "normal",
+      "lastUpdate": "2026-05-30",
+      "source": "东方财富"
+    }
+  ]
+}

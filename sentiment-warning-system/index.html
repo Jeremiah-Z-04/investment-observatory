@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>A股主线情绪与阶段见顶预警系统</title>
+<script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/element-plus@2.6.1/dist/index.full.min.js"></script>
+<script src="https://unpkg.com/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+<script src="https://unpkg.com/echarts@5.5.0/dist/echarts.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-plus@2.6.1/dist/index.css">
+<style>
+:root{--bg:#0a0e1a;--card-bg:rgba(15,23,42,.85);--border:rgba(100,116,255,.15);--accent:#6366f1;--accent2:#818cf8;--green:#22c55e;--yellow:#eab308;--orange:#f97316;--red:#ef4444;--text:#cbd5e1;--muted:#64748b}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(99,102,241,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(139,92,246,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+#app{position:relative;z-index:1;min-height:100vh;display:flex}
+.sidebar{width:240px;min-width:240px;background:var(--card-bg);backdrop-filter:blur(20px);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar .logo{padding:0 20px 16px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar .logo h1{font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sidebar .logo p{font-size:10px;color:var(--muted);margin-top:4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 20px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;border-right:3px solid transparent;margin:2px 0}
+.nav-item:hover{background:rgba(99,102,241,.06);color:var(--text)}
+.nav-item.active{background:rgba(99,102,241,.1);color:#fff;border-right-color:var(--accent)}
+.main{margin-left:240px;flex:1;padding:24px;min-height:100vh}
+.glass-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
+.stat-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:14px;padding:16px 20px;text-align:center;transition:all .3s}
+.stat-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.stat-value{font-size:28px;font-weight:700;color:#fff}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px}
+.stat-change{font-size:12px;margin-top:4px}
+.grid-cols-5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.grid-cols-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-cols-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.alert-bar{position:fixed;top:0;left:240px;right:0;z-index:200;padding:12px 24px;text-align:center;font-weight:600;font-size:14px;animation:slideDown .4s ease;display:flex;align-items:center;justify-content:center;gap:12px}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.risk-safe{background:rgba(34,197,94,.15);color:var(--green);border-bottom:2px solid var(--green)}
+.risk-mild{background:rgba(234,179,8,.15);color:var(--yellow);border-bottom:2px solid var(--yellow)}
+.risk-moderate{background:rgba(249,115,22,.15);color:var(--orange);border-bottom:2px solid var(--orange)}
+.risk-severe{background:rgba(239,68,68,.15);color:var(--red);border-bottom:2px solid var(--red)}
+.section-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.tag-sm{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;display:inline-block}
+.trigger-list{max-height:300px;overflow-y:auto}
+.trigger-item{padding:8px 12px;border-left:3px solid var(--border);margin-bottom:6px;font-size:12px;transition:.2s;background:rgba(255,255,255,.01);border-radius:0 6px 6px 0}
+.trigger-item.mild{border-left-color:var(--yellow)}
+.trigger-item.moderate{border-left-color:var(--orange)}
+.trigger-item.severe{border-left-color:var(--red)}
+.module-dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.el-table{--el-table-bg-color:transparent;--el-table-tr-bg-color:transparent;--el-table-header-bg-color:rgba(255,255,255,.03);--el-table-border-color:var(--border);--el-table-text-color:var(--text);--el-table-header-text-color:var(--muted)}
+.el-table th{font-size:11px!important;font-weight:500!important}
+.el-table td{font-size:12px!important}
+.el-button--primary{--el-button-bg-color:var(--accent);--el-button-border-color:var(--accent)}
+.el-progress-bar__outer{background:rgba(255,255,255,.06)!important;border-radius:4px!important}
+.chart-box{width:100%;height:320px}
+.chart-box-sm{width:100%;height:240px}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="logo"><h1>📊 情绪预警系统</h1><p>树干树枝 · 多因子共振</p></div>
+    <div v-for="item in navItems" :key="item.key" class="nav-item" :class="{active:currentPage===item.key}" @click="currentPage=item.key">
+      <span>{{item.icon}}</span><span>{{item.label}}</span>
+    </div>
+    <div style="margin-top:auto;padding:20px;border-top:1px solid var(--border);font-size:10px;color:var(--muted)">
+      <div style="margin-bottom:4px">数据源: {{settings.data_source==='mock'?'模拟数据':'真实接口'}}</div>
+      <div>自动刷新: {{settings.alert.refresh_interval}}s/次</div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main">
+    <!-- Alert Bar -->
+    <div v-if="riskData.risk_level!=='安全'" :class="['alert-bar','risk-'+(riskData.risk_level==='重度预警'?'severe':riskData.risk_level==='中度预警'?'moderate':'mild')]">
+      <span>⚠️</span>
+      <span>{{riskData.risk_level}} - 触发{{riskData.triggered_modules?.length||0}}个模块</span>
+      <span style="font-size:11px;opacity:.8">{{riskData.triggered_modules?.join('、')}}</span>
+      <button class="el-button el-button--small is-plain" style="margin-left:auto" @click="alertDismissed=true">关闭</button>
+    </div>
+
+    <!-- Page: Dashboard -->
+    <div v-if="currentPage==='dashboard'">
+      <div class="section-title">📋 市场概览</div>
+      <div class="grid-cols-5" style="margin-bottom:16px">
+        <div class="stat-card"><div class="stat-value">{{market.sh_index}}</div><div class="stat-label">上证指数</div><div class="stat-change" :style="{color:market.sh_change>=0?'var(--green)':'var(--red)'}">{{market.sh_change>=0?'+':''}}{{market.sh_change}}%</div></div>
+        <div class="stat-card"><div class="stat-value">{{market.sz_index}}</div><div class="stat-label">深证成指</div><div class="stat-change" :style="{color:market.sz_change>=0?'var(--green)':'var(--red)'}">{{market.sz_change>=0?'+':''}}{{market.sz_change}}%</div></div>
+        <div class="stat-card"><div class="stat-value">{{market.total_volume}}</div><div class="stat-label">两市成交额(亿)</div><div class="stat-change" style="color:var(--muted)">20日均:{{market.avg_volume_20d}}亿</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:var(--green)">{{market.advance_count}}</div><div class="stat-label">上涨家数</div><div class="stat-change" style="color:var(--red)">{{market.decline_count}} 下跌</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:var(--red)">{{(market.board_break_rate*100).toFixed(0)}}%</div><div class="stat-label">炸板率</div><div class="stat-change" :style="{color:market.board_break_rate>0.4?'var(--red)':'var(--muted)'}">{{market.limit_up_count}}涨停 {{market.limit_down_count}}跌停</div></div>
+      </div>
+
+      <div class="grid-cols-3" style="margin-bottom:16px">
+        <div class="glass-card" style="text-align:center">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">风险等级</div>
+          <div style="font-size:48px;font-weight:800" :style="{color:riskData.risk_color}">{{riskData.risk_level}}</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:8px">共振评分: {{riskData.total_score}} / 10</div>
+        </div>
+        <div class="glass-card">
+          <div style="font-weight:600;margin-bottom:8px;color:#fff">触发模块明细</div>
+          <div class="trigger-list">
+            <div v-for="(t,i) in riskData.all_triggers" :key="i" class="trigger-item" :class="riskData.total_score>=3?'severe':riskData.total_score>=2?'moderate':'mild'">{{t}}</div>
+            <div v-if="!riskData.all_triggers?.length" style="text-align:center;padding:30px;color:var(--green);font-size:14px">✅ 当前无预警信号，市场运行正常</div>
+          </div>
+        </div>
+        <div class="glass-card">
+          <div style="font-weight:600;margin-bottom:8px;color:#fff">五大模块状态</div>
+          <div v-for="(m,key) in riskData.modules" :key="key" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px">
+            <span>{{moduleLabels[key]}}</span>
+            <span style="display:flex;align-items:center;gap:6px">
+              <span class="module-dot" :style="{background:m.triggered?'var(--red)':'var(--green)'}"></span>
+              <span>{{m.triggered?'触发('+m.score+'分)':'正常'}}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-cols-2">
+        <div class="glass-card"><div class="section-title">📈 近7日情绪得分趋势</div><div class="chart-box" id="chart_emotion_trend"></div></div>
+        <div class="glass-card"><div class="section-title">🏆 主线成交占比 TOP5</div><div class="chart-box" id="chart_sector_rank"></div></div>
+      </div>
+    </div>
+
+    <!-- Page: Mainline Analysis -->
+    <div v-if="currentPage==='mainline'">
+      <div class="section-title">🔍 板块强度排行榜</div>
+      <div class="glass-card">
+        <el-table :data="sectors" stripe size="small" @row-click="selectSector">
+          <el-table-column prop="rank" label="#" width="50"/>
+          <el-table-column prop="sector_name" label="板块名称" width="120"/>
+          <el-table-column prop="volume_ratio" label="成交占比(%)" width="100" sortable>
+            <template #default="s"><el-progress :percentage="s.row.volume_ratio*4" :color="s.row.volume_ratio>10?'#6366f1':'#64748b'" :stroke-width="8"/></template>
+          </el-table-column>
+          <el-table-column prop="limit_up_count" label="涨停数" width="80"/>
+          <el-table-column prop="net_flow" label="资金净流(亿)" width="110">
+            <template #default="s"><span :style="{color:s.row.net_flow>=0?'var(--green)':'var(--red)'}">{{s.row.net_flow>=0?'+':''}}{{s.row.net_flow}}</span></template>
+          </el-table-column>
+          <el-table-column prop="echelon_score" label="梯队完整度" width="100">
+            <template #default="s">{{'⭐'.repeat(s.row.echelon_score)}}{{s.row.echelon_score===0?'断层':''}}</template>
+          </el-table-column>
+          <el-table-column prop="strength_label" label="强度标签" width="100">
+            <template #default="s"><span class="tag-sm" :style="{background:s.row.is_trunk?'rgba(99,102,241,.2)':'rgba(100,116,139,.15)',color:s.row.is_trunk?'var(--accent2)':'var(--muted)'}">{{s.row.strength_label}}</span></template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div v-if="selectedSector" class="glass-card" style="margin-top:16px">
+        <div class="section-title">📊 {{selectedSector.sector_name}} 板块详情</div>
+        <div class="grid-cols-2">
+          <div><div style="font-weight:600;margin-bottom:12px;color:#fff">板块成交趋势</div><div class="chart-box-sm" id="chart_sector_trend"></div></div>
+          <div>
+            <div style="font-weight:600;margin-bottom:12px;color:#fff">内部梯队结构</div>
+            <div v-for="(group,gk) in sectorDetail.echelon||{}" :key="gk" style="margin-bottom:12px">
+              <div style="font-size:11px;color:var(--accent);margin-bottom:4px">{{group.name}}</div>
+              <div v-for="s in group.stocks" :key="s.code" style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,.02);border-radius:6px;margin-bottom:4px;font-size:12px">
+                <span>{{s.name}} <span style="color:var(--muted);font-size:10px">{{s.code}}</span></span>
+                <span :style="{color:s.change>=0?'var(--green)':'var(--red)'}">{{s.change>=0?'+':''}}{{s.change}}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page: Emotion Thermometer -->
+    <div v-if="currentPage==='emotion'">
+      <div class="section-title">🌡️ 全市场情绪温度计</div>
+      <div class="grid-cols-3" style="margin-bottom:16px">
+        <div class="stat-card"><div class="stat-value" :style="{color:emotion.sentiment_score>70?'var(--red)':emotion.sentiment_score<30?'var(--green)':'var(--yellow)'}">{{emotion.sentiment_score}}</div><div class="stat-label">情绪得分</div></div>
+        <div class="stat-card"><div class="stat-value">{{emotion.cycle_phase}}</div><div class="stat-label">当前周期阶段</div></div>
+        <div class="stat-card"><div class="stat-value">{{emotion.fear_greed_index}}</div><div class="stat-label">恐惧贪婪指数</div></div>
+      </div>
+
+      <div class="grid-cols-2" style="margin-bottom:16px">
+        <div class="glass-card"><div class="section-title">📊 涨跌分布统计</div><div class="chart-box-sm" id="chart_distribution"></div></div>
+        <div class="glass-card"><div class="section-title">🪜 连板天梯</div>
+          <div v-for="ladder in emotion.consecutive_ladder||[]" :key="ladder.height" style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span class="tag-sm" :style="{background:'rgba(99,102,241,.2)',color:'var(--accent2)'}">{{ladder.height}}板</span>
+            <span style="color:var(--muted)">{{ladder.count}}只</span>
+            <span>{{(ladder.stocks||[]).join('、')}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card"><div class="section-title">📈 历史情绪周期曲线</div><div class="chart-box" id="chart_emotion_history"></div></div>
+    </div>
+
+    <!-- Page: Backtest -->
+    <div v-if="currentPage==='backtest'">
+      <div class="section-title">📅 历史回测</div>
+      <div class="glass-card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <span style="color:var(--muted)">回测天数:</span>
+          <el-slider v-model="backtestDays" :min="7" :max="90" :step="7" style="flex:1;max-width:300px" @change="loadBacktest"/>
+          <span style="color:var(--accent);font-weight:600">{{backtestDays}}天</span>
+        </div>
+        <div class="chart-box" id="chart_backtest"></div>
+      </div>
+
+      <div class="glass-card">
+        <div class="section-title">📊 预警准确率统计</div>
+        <div class="grid-cols-2">
+          <div><el-table :data="accuracyTable" size="small"><el-table-column prop="level" label="风险等级" width="100"/><el-table-column prop="count" label="预警次数" width="80"/><el-table-column prop="correct" label="准确次数" width="80"/><el-table-column prop="accuracy" label="准确率(%)" width="90"/><el-table-column prop="avg_change" label="5日均涨跌(%)" width="120"/></el-table></div>
+          <div class="chart-box-sm" id="chart_accuracy"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page: Settings -->
+    <div v-if="currentPage==='settings'">
+      <div class="section-title">⚙️ 系统设置</div>
+      <div class="glass-card">
+        <div style="font-weight:600;color:#fff;margin-bottom:16px">预警阈值配置</div>
+        <div class="grid-cols-2">
+          <div v-for="mod in settingModules" :key="mod.key" style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="font-weight:500;font-size:13px;color:var(--accent2);margin-bottom:8px">{{mod.label}}</div>
+            <div v-for="param in mod.params" :key="param.key" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:12px">
+              <span style="color:var(--muted)">{{param.label}}</span>
+              <el-input-number v-model="settings[mod.key][param.key]" :min="param.min" :max="param.max" :step="param.step" size="small" style="width:140px"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card" style="margin-top:16px">
+        <div style="font-weight:600;color:#fff;margin-bottom:16px">提醒配置</div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--muted);font-size:13px">弹窗提醒</span><el-switch v-model="settings.alert.popup"/></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--muted);font-size:13px">声音提醒</span><el-switch v-model="settings.alert.sound"/></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--muted);font-size:13px">刷新间隔(秒)</span><el-input-number v-model="settings.alert.refresh_interval" :min="60" :max="3600" :step="60" size="small"/></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--muted);font-size:13px">数据源</span><el-select v-model="settings.data_source" size="small" style="width:120px"><el-option label="模拟数据" value="mock"/><el-option label="真实接口" value="live"/></el-select></div>
+        </div>
+        <el-button type="primary" size="small" style="margin-top:16px" @click="saveSettings">保存设置</el-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const { createApp, ref, reactive, computed, watch, onMounted, nextTick } = Vue;
+
+const API_BASE = "http://localhost:8766";
+
+const app = createApp({
+  setup(){
+    const currentPage = ref("dashboard");
+    const alertDismissed = ref(false);
+
+    const navItems = [
+      {key:"dashboard",label:"首页仪表盘",icon:"📋"},
+      {key:"mainline",label:"主线分析",icon:"🔍"},
+      {key:"emotion",label:"情绪温度计",icon:"🌡️"},
+      {key:"backtest",label:"历史回测",icon:"📅"},
+      {key:"settings",label:"系统设置",icon:"⚙️"},
+    ];
+
+    const moduleLabels = {
+      breadth:"市场广度背离",volume:"全市场量能",sentiment:"短线情绪",mainline:"主线树干强度",auxiliary:"辅助验证"
+    };
+
+    // Data
+    const market = reactive({sh_index:"--",sz_index:"--",sh_change:0,sz_change:0,total_volume:"--",avg_volume_20d:"--",advance_count:0,decline_count:0,limit_up_count:0,limit_down_count:0,board_break_rate:0});
+    const riskData = reactive({total_score:0,risk_level:"加载中...",risk_color:"var(--muted)",triggered_modules:[],all_triggers:[],modules:{}});
+    const sectors = ref([]);
+    const selectedSector = ref(null);
+    const sectorDetail = reactive({});
+    const emotion = reactive({sentiment_score:0,cycle_phase:"--",fear_greed_index:0,consecutive_ladder:[],limit_distribution:{},advance_decline:{}});
+    const emotionHistory = ref([]);
+    const backtestDays = ref(30);
+    const backtestData = ref([]);
+    const accuracyData = reactive({});
+    const accuracyTable = ref([]);
+
+    const settings = reactive({
+      breadth:{ratio_threshold:0.5,big_drop_threshold:100},
+      volume:{spike_ratio:1.5,diverge_ratio:0.7},
+      sentiment:{board_break_threshold:0.4,consecutive_min:3},
+      mainline:{volume_min:5,rotation_max:60},
+      auxiliary:{rally_days_max:30},
+      alert:{popup:true,sound:false,refresh_interval:300},
+      data_source:"mock"
+    });
+
+    const settingModules = [
+      {key:"breadth",label:"市场广度背离",params:[{key:"ratio_threshold",label:"涨跌比阈值",min:0.1,max:5,step:0.1},{key:"big_drop_threshold",label:"大跌阈值(只)",min:20,max:300,step:10}]},
+      {key:"volume",label:"全市场量能",params:[{key:"spike_ratio",label:"天量倍数",min:1.1,max:3,step:0.1},{key:"diverge_ratio",label:"背离阈值",min:0.3,max:1,step:0.1}]},
+      {key:"sentiment",label:"短线情绪",params:[{key:"board_break_threshold",label:"炸板率阈值",min:0.1,max:0.8,step:0.05},{key:"consecutive_min",label:"最低连板高度",min:1,max:10,step:1}]},
+      {key:"mainline",label:"主线树干强度",params:[{key:"volume_min",label:"最低成交占比(%)",min:1,max:20,step:0.5},{key:"rotation_max",label:"最大轮动速率",min:20,max:100,step:5}]},
+      {key:"auxiliary",label:"辅助验证",params:[{key:"rally_days_max",label:"最大上涨天数",min:10,max:60,step:5}]},
+    ];
+
+    // API
+    async function fetchJSON(path){
+      try{ const r=await fetch(API_BASE+path); return await r.json(); }
+      catch(e){ console.error(path,e); return null; }
+    }
+
+    async function loadOverview(){
+      const d = await fetchJSON("/api/market/overview");
+      if(!d?.data) return;
+      Object.assign(market, d.data.market);
+      Object.assign(riskData, d.data.assessment);
+    }
+
+    async function loadSectors(){
+      const d = await fetchJSON("/api/sector/rank");
+      if(d?.data) sectors.value = d.data;
+    }
+
+    async function loadEmotion(){
+      const d = await fetchJSON("/api/emotion/daily");
+      if(d?.data) Object.assign(emotion, d.data);
+      const h = await fetchJSON("/api/emotion/history?days=30");
+      if(h?.data) emotionHistory.value = h.data;
+    }
+
+    async function loadBacktest(){
+      const d = await fetchJSON("/api/backtest/range?days="+backtestDays.value);
+      if(d?.data) backtestData.value = d.data;
+      const a = await fetchJSON("/api/backtest/accuracy");
+      if(a?.data){
+        Object.assign(accuracyData, a.data);
+        accuracyTable.value = [
+          {level:"重度预警",count:a.data.severe.count,correct:a.data.severe.correct,accuracy:a.data.severe.accuracy,avg_change:a.data.severe.avg_drop_5d+"%"},
+          {level:"中度预警",count:a.data.moderate.count,correct:a.data.moderate.correct,accuracy:a.data.moderate.accuracy,avg_change:a.data.moderate.avg_drop_5d+"%"},
+          {level:"轻度预警",count:a.data.mild.count,correct:a.data.mild.correct,accuracy:a.data.mild.accuracy,avg_change:a.data.mild.avg_drop_5d+"%"},
+          {level:"安全",count:a.data.safe.count,correct:a.data.safe.correct,accuracy:a.data.safe.accuracy,avg_change:a.data.safe.avg_change_5d+"%"},
+        ];
+      }
+    }
+
+    async function selectSector(row){
+      selectedSector.value = row;
+      const d = await fetchJSON("/api/sector/detail?sector="+encodeURIComponent(row.sector_name));
+      if(d?.data) Object.assign(sectorDetail, d.data);
+      await nextTick();
+      renderSectorTrend();
+    }
+
+    async function saveSettings(){
+      await fetch(API_BASE+"/api/settings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(settings)});
+      ElMessage.success("设置已保存");
+    }
+
+    // Charts
+    function renderEmotionTrend(){
+      const el = document.getElementById("chart_emotion_trend");
+      if(!el) return;
+      const chart = echarts.init(el);
+      const dates = [];
+      const scores = [];
+      for(let i=6;i>=0;i--){
+        const d = new Date(); d.setDate(d.getDate()-i);
+        dates.push((d.getMonth()+1)+"/"+d.getDate());
+        scores.push(+(30+Math.random()*50).toFixed(1));
+      }
+      chart.setOption({
+        tooltip:{trigger:"axis"},
+        grid:{left:40,right:20,top:10,bottom:30},
+        xAxis:{type:"category",data:dates,axisLabel:{color:"#64748b",fontSize:10}},
+        yAxis:{type:"value",min:0,max:100,axisLabel:{color:"#64748b",fontSize:10},splitLine:{lineStyle:{color:"rgba(100,116,255,.1)"}}},
+        series:[{data:scores,type:"line",smooth:true,areaStyle:{color:{type:"linear",x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:"rgba(99,102,241,.3)"},{offset:1,color:"rgba(99,102,241,.02)"}]}},lineStyle:{color:"#6366f1",width:2},itemStyle:{color:"#818cf8"}}]
+      });
+    }
+
+    function renderSectorRank(){
+      const el = document.getElementById("chart_sector_rank");
+      if(!el) return;
+      const chart = echarts.init(el);
+      const names = sectors.value.slice(0,5).map(s=>s.sector_name)||["AI算力","半导体","光模块","存储","新能源"];
+      const vals = sectors.value.slice(0,5).map(s=>s.volume_ratio)||[18,14,11,9,8];
+      chart.setOption({
+        tooltip:{trigger:"axis"},
+        grid:{left:80,right:20,top:10,bottom:20},
+        xAxis:{type:"value",axisLabel:{color:"#64748b",fontSize:10},splitLine:{lineStyle:{color:"rgba(100,116,255,.1)"}}},
+        yAxis:{type:"category",data:names.reverse(),axisLabel:{color:"#cbd5e1",fontSize:11},inverse:true},
+        series:[{data:vals.reverse(),type:"bar",barWidth:16,itemStyle:{borderRadius:[0,4,4,0],color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:"#6366f1"},{offset:1,color:"#818cf8"}])},label:{show:true,position:"right",color:"#64748b",fontSize:10,formatter:"{c}%"}}]
+      });
+    }
+
+    function renderSectorTrend(){
+      const el = document.getElementById("chart_sector_trend");
+      if(!el) return;
+      const chart = echarts.init(el);
+      const dates = sectorDetail.trend?.dates||[];
+      const vals = sectorDetail.trend?.volume_ratio||[];
+      chart.setOption({
+        tooltip:{trigger:"axis"},
+        grid:{left:40,right:20,top:10,bottom:30},
+        xAxis:{type:"category",data:dates,axisLabel:{color:"#64748b",fontSize:10,interval:4}},
+        yAxis:{type:"value",axisLabel:{color:"#64748b",fontSize:10},splitLine:{lineStyle:{color:"rgba(100,116,255,.1)"}}},
+        series:[{data:vals,type:"line",smooth:true,areaStyle:{color:{type:"linear",x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:"rgba(34,197,94,.2)"},{offset:1,color:"rgba(34,197,94,.02)"}]}},lineStyle:{color:"#22c55e",width:2},itemStyle:{color:"#22c55e"}}]
+      });
+    }
+
+    function renderDistribution(){
+      const el = document.getElementById("chart_distribution");
+      if(!el) return;
+      const chart = echarts.init(el);
+      const d = emotion.advance_decline||{};
+      const cats = ["强势上涨","小幅上涨","平盘","小幅下跌","大幅下跌"];
+      const vals = [d.strong_up||200,d.slight_up||800,d.flat||500,d.slight_down||700,d.strong_down||150];
+      const colors = ["#ef4444","#f97316","#64748b","#3b82f6","#22c55e"];
+      chart.setOption({
+        tooltip:{trigger:"axis"},
+        grid:{left:80,right:20,top:10,bottom:20},
+        xAxis:{type:"value",axisLabel:{color:"#64748b",fontSize:10},splitLine:{lineStyle:{color:"rgba(100,116,255,.1)"}}},
+        yAxis:{type:"category",data:cats,axisLabel:{color:"#cbd5e1",fontSize:10}},
+        series:[{data:vals.map((v,i)=>({value:v,itemStyle:{color:colors[i],borderRadius:[0,4,4,0]}})),type:"bar",barWidth:14}]
+      });
+    }
+
+    function renderEmotionHistory(){
+      const el = document.getElementById("chart_emotion_history");
+      if(!el) return;
+      const chart = echarts.init(el);
+      const dates = emotionHistory.value.map(e=>e.date.slice(5))||[];
+      const scores = emotionHistory.value.map(e=>e.score)||[];
+      chart.setOption({
+        tooltip:{trigger:"axis"},
+        grid:{left:40,right:30,top:10,bottom:30},
+        xAxis:{type:"category",data:dates,axisLabel:{color:"#64748b",fontSize:10,interval:5}},
+        yAxis:{type:"value",min:0,max:100,axisLabel:{color:"#64748b",fontSize:10},splitLine:{lineStyle:{color:"rgba(100,116,255,.1)"}}},
+        visualMap:{show:false,pieces:[{lt:30,color:"#22c55e"},{lt:50,color:"#eab308"},{lt:70,color:"#f97316"},{color:"#ef4444"}]},
+        series:[{data:scores,type:"line",smooth:true,areaStyle:{color:{type:"linear",x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:"rgba(99,102,241,.2)"},{offset:1,color:"rgba(99,102,241,.02)"}]}},lineStyle:{color:"#6366f1",width:2},markLine:{silent:true,data:[{yAxis:30,label:{formatter:"冰点",color:"#22c55e"}},{yAxis:70,label:{formatter:"高潮",color:"#ef4444"}}],lineStyle:{color:"rgba(255,255,255,.2)",type:"dashed"}}}]});
+      });
+    }
+
+    function renderBacktest(){
+      const el = document.getElementById("chart_backtest");
+      if(!el) return;
+      const chart = echarts.init(el);
+      const dates = backtestData.value.map(d=>d.trade_date.slice(5))||[];
+      const scores = backtestData.value.map(d=>d.assessment.total_score)||[];
+      const changes = backtestData.value.map(d=>d.market.sh_change)||[];
+      chart.setOption({
+        tooltip:{trigger:"axis"},
+        legend:{data:["风险评分","上证涨跌"],textStyle:{color:"#64748b",fontSize:10},top:0},
+        grid:{left:40,right:40,top:30,bottom:30},
+        xAxis:{type:"category",data:dates,axisLabel:{color:"#64748b",fontSize:10,interval:Math.floor(dates.length/8)}},
+        yAxis:[
+          {type:"value",name:"评分",min:0,max:10,axisLabel:{color:"#64748b",fontSize:10},splitLine:{lineStyle:{color:"rgba(100,116,255,.1)"}}},
+          {type:"value",name:"涨跌%",axisLabel:{color:"#64748b",fontSize:10}}
+        ],
+        series:[
+          {name:"风险评分",type:"bar",data:scores,itemStyle:{borderRadius:[3,3,0,0],color:function(p){var v=p.value;return v>=3?"#ef4444":v>=2?"#f97316":v>=1?"#eab308":"#22c55e"}},barWidth:8},
+          {name:"上证涨跌",type:"line",yAxisIndex:1,data:changes,smooth:true,lineStyle:{color:"#64748b",width:1.5},itemStyle:{color:"#64748b"},symbol:"none"}
+        ]
+      });
+    }
+
+    function renderAccuracy(){
+      const el = document.getElementById("chart_accuracy");
+      if(!el) return;
+      const chart = echarts.init(el);
+      chart.setOption({
+        tooltip:{trigger:"axis"},
+        grid:{left:40,right:20,top:10,bottom:30},
+        xAxis:{type:"category",data:["重度","中度","轻度","安全"],axisLabel:{color:"#64748b",fontSize:10}},
+        yAxis:{type:"value",min:0,max:100,axisLabel:{color:"#64748b",fontSize:10,formatter:"{value}%"},splitLine:{lineStyle:{color:"rgba(100,116,255,.1)"}}},
+        series:[
+          {name:"准确率",type:"bar",data:[accuracyData.severe?.accuracy||83,accuracyData.moderate?.accuracy||68,accuracyData.mild?.accuracy||53,accuracyData.safe?.accuracy||86],barWidth:24,itemStyle:{borderRadius:[4,4,0,0],color:function(p){return["#ef4444","#f97316","#eab308","#22c55e"][p.dataIndex]}},label:{show:true,position:"top",color:"#64748b",fontSize:10,formatter:"{c}%"}}
+        ]
+      });
+    }
+
+    // Watchers
+    watch(currentPage, async (p)=>{
+      await nextTick();
+      if(p==="dashboard"){ renderEmotionTrend(); renderSectorRank(); }
+      if(p==="emotion"){ renderDistribution(); setTimeout(renderEmotionHistory,200); }
+      if(p==="backtest"){ setTimeout(renderBacktest,300); setTimeout(renderAccuracy,400); }
+    });
+
+    // Init
+    onMounted(async ()=>{
+      await Promise.all([loadOverview(),loadSectors(),loadEmotion(),loadBacktest()]);
+      await nextTick();
+      renderEmotionTrend();
+      renderSectorRank();
+      // Auto refresh
+      setInterval(async ()=>{
+        await loadOverview();
+        if(currentPage.value==="dashboard"){ renderEmotionTrend(); renderSectorRank(); }
+      }, settings.alert.refresh_interval*1000);
+    });
+
+    return {
+      currentPage,alertDismissed,navItems,moduleLabels,
+      market,riskData,sectors,selectedSector,sectorDetail,
+      emotion,emotionHistory,backtestDays,backtestData,accuracyData,accuracyTable,
+      settings,settingModules,
+      selectSector,saveSettings,loadBacktest
+    };
+  }
+});
+
+app.use(ElementPlus);
+app.mount("#app");
+</script>
+</body>
+</html>

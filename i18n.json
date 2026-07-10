@@ -1,0 +1,942 @@
+{
+  "app.title": {
+    "zh": "🔬 科技投资观察站",
+    "en": "🔬 Tech Investment Observatory"
+  },
+  "app.subtitle": {
+    "zh": "数据驱动 · 实战导向",
+    "en": "Data-Driven · Action-Oriented"
+  },
+  "nav.home": {
+    "zh": "🏠 首页",
+    "en": "🏠 Home"
+  },
+  "nav.radar": {
+    "zh": "📊 主线雷达",
+    "en": "📊 Thread Radar"
+  },
+  "nav.chain": {
+    "zh": "🔍 产业链图谱",
+    "en": "🔍 Industry Chain"
+  },
+  "nav.prosperity": {
+    "zh": "📈 景气度跟踪",
+    "en": "📈 Prosperity"
+  },
+  "nav.risk": {
+    "zh": "⚠️ 风险预警",
+    "en": "⚠️ Risk Alerts"
+  },
+  "nav.method": {
+    "zh": "📚 投资方法论",
+    "en": "📚 Methodology"
+  },
+  "nav.companies": {
+    "zh": "🏢 公司数据库",
+    "en": "🏢 Companies"
+  },
+  "nav.reports": {
+    "zh": "📄 研报中心",
+    "en": "📄 Research"
+  },
+  "nav.history": {
+    "zh": "📅 历史数据",
+    "en": "📅 History"
+  },
+  "nav.portfolio": {
+    "zh": "💼 持仓管理",
+    "en": "💼 Portfolio"
+  },
+  "status.offline": {
+    "zh": "🔴 离线模式",
+    "en": "🔴 Offline"
+  },
+  "status.online": {
+    "zh": "🟢 实时在线",
+    "en": "🟢 Online"
+  },
+  "status.loading": {
+    "zh": "⏳ 刷新中...",
+    "en": "⏳ Loading..."
+  },
+  "btn.refresh": {
+    "zh": "🔄 刷新数据",
+    "en": "🔄 Refresh"
+  },
+  "btn.login": {
+    "zh": "👤 登录",
+    "en": "👤 Login"
+  },
+  "btn.logout": {
+    "zh": " | 退出",
+    "en": " | Exit"
+  },
+  "btn.lang": {
+    "zh": "EN",
+    "en": "中"
+  },
+  "login.title": {
+    "zh": "👤 登录 / 注册",
+    "en": "👤 Login / Register"
+  },
+  "login.username": {
+    "zh": "用户名",
+    "en": "Username"
+  },
+  "login.password": {
+    "zh": "密码",
+    "en": "Password"
+  },
+  "login.btn_login": {
+    "zh": "登 录",
+    "en": "Login"
+  },
+  "login.btn_register": {
+    "zh": "注 册",
+    "en": "Register"
+  },
+  "login.err_empty": {
+    "zh": "请填写用户名和密码",
+    "en": "Please fill in all fields"
+  },
+  "login.err_wrong": {
+    "zh": "用户名或密码错误",
+    "en": "Wrong username or password"
+  },
+  "login.err_exists": {
+    "zh": "用户名已存在",
+    "en": "Username already exists"
+  },
+  "login.logged_in": {
+    "zh": "✅ 已登录: ",
+    "en": "✅ Logged in: "
+  },
+  "login.require_server": {
+    "zh": "请先启动数据服务器",
+    "en": "Please start data server first"
+  },
+  "ai.analyzing": {
+    "zh": "🤖 AI 分析中...",
+    "en": "🤖 AI Analyzing..."
+  },
+  "ai.wait": {
+    "zh": "DeepSeek 正在分析...",
+    "en": "DeepSeek is analyzing..."
+  },
+  "ai.result": {
+    "zh": "🤖 AI 分析结果",
+    "en": "🤖 AI Analysis Result"
+  },
+  "ai.failed": {
+    "zh": "❌ 分析失败",
+    "en": "❌ Analysis Failed"
+  },
+  "ai.error": {
+    "zh": "❌ 请求失败",
+    "en": "❌ Request Failed"
+  },
+  "home.title": {
+    "zh": "最强主线排名",
+    "en": "Strongest Threads"
+  },
+  "home.signals": {
+    "zh": "实时信号",
+    "en": "Live Signals"
+  },
+  "home.risks": {
+    "zh": "风险预警",
+    "en": "Risk Alerts"
+  },
+  "home.events": {
+    "zh": "近期重要事件",
+    "en": "Upcoming Events"
+  },
+  "home.timeline": {
+    "zh": "产业链传导时间轴",
+    "en": "Industry Lifecycle Timeline"
+  },
+  "home.volume": {
+    "zh": "成交额(亿)",
+    "en": "Volume(100M)"
+  },
+  "home.northbound": {
+    "zh": "北向资金(亿)",
+    "en": "Northbound(100M)"
+  },
+  "home.tracked_avg": {
+    "zh": "跟踪均值",
+    "en": "Tracked Avg"
+  },
+  "home.rank_col": {
+    "zh": "#",
+    "en": "#"
+  },
+  "home.thread_col": {
+    "zh": "主线",
+    "en": "Thread"
+  },
+  "home.score_col": {
+    "zh": "评分",
+    "en": "Score"
+  },
+  "home.stage_col": {
+    "zh": "阶段",
+    "en": "Stage"
+  },
+  "home.dur_col": {
+    "zh": "预期持续时间",
+    "en": "Duration"
+  },
+  "home.driver_col": {
+    "zh": "核心驱动",
+    "en": "Driver"
+  },
+  "home.action_col": {
+    "zh": "操作建议",
+    "en": "Action"
+  },
+  "chart.concept": {
+    "zh": "概念期",
+    "en": "Concept"
+  },
+  "chart.growth": {
+    "zh": "业绩爆发期",
+    "en": "Growth"
+  },
+  "chart.split": {
+    "zh": "分化期",
+    "en": "Split"
+  },
+  "chart.mature": {
+    "zh": "成熟期",
+    "en": "Mature"
+  },
+  "radar.title": {
+    "zh": "主线雷达 - 全景分析",
+    "en": "Thread Radar - Full Analysis"
+  },
+  "radar.dim_supply": {
+    "zh": "供需缺口",
+    "en": "Supply Gap"
+  },
+  "radar.dim_order": {
+    "zh": "订单能见度",
+    "en": "Order Visibility"
+  },
+  "radar.dim_profit": {
+    "zh": "业绩兑现",
+    "en": "Profit Delivery"
+  },
+  "radar.dim_policy": {
+    "zh": "政策支持",
+    "en": "Policy Support"
+  },
+  "radar.dim_fund": {
+    "zh": "资金流向",
+    "en": "Fund Flow"
+  },
+  "radar.ai_btn": {
+    "zh": "🤖 AI 主线分析",
+    "en": "🤖 AI Thread Analysis"
+  },
+  "chain.title": {
+    "zh": "产业链图谱",
+    "en": "Industry Chain Map"
+  },
+  "chain.products": {
+    "zh": "产品",
+    "en": "Products"
+  },
+  "chain.value": {
+    "zh": "占比",
+    "en": "Value"
+  },
+  "chain.growth": {
+    "zh": "增速",
+    "en": "Growth"
+  },
+  "chain.pe": {
+    "zh": "市盈率",
+    "en": "PE"
+  },
+  "chain.companies": {
+    "zh": "代表公司",
+    "en": "Companies"
+  },
+  "prosp.title": {
+    "zh": "景气度跟踪",
+    "en": "Prosperity Tracking"
+  },
+  "prosp.health": {
+    "zh": "主线健康度评分",
+    "en": "Thread Health Scores"
+  },
+  "prosp.vr200": {
+    "zh": "VR200 专项跟踪",
+    "en": "VR200 Special Tracker"
+  },
+  "prosp.metric": {
+    "zh": "指标",
+    "en": "Metric"
+  },
+  "prosp.value": {
+    "zh": "数值",
+    "en": "Value"
+  },
+  "prosp.status": {
+    "zh": "状态",
+    "en": "Status"
+  },
+  "prosp.on_track": {
+    "zh": "按计划",
+    "en": "On Track"
+  },
+  "prosp.critical": {
+    "zh": "紧缺",
+    "en": "Critical"
+  },
+  "prosp.monitor": {
+    "zh": "关注",
+    "en": "Monitor"
+  },
+  "prosp.pending": {
+    "zh": "待确认",
+    "en": "Pending"
+  },
+  "prosp.shipment": {
+    "zh": "出货进度",
+    "en": "Shipment Progress"
+  },
+  "prosp.gap": {
+    "zh": "供需缺口",
+    "en": "Supply Gap"
+  },
+  "prosp.related": {
+    "zh": "关联标的",
+    "en": "Related Stocks"
+  },
+  "prosp.capacity": {
+    "zh": "产能爬坡",
+    "en": "Capacity Ramp"
+  },
+  "prosp.july": {
+    "zh": "2026年7月首批",
+    "en": "July 2026 1st Batch"
+  },
+  "prosp.gap_42": {
+    "zh": "短缺42%",
+    "en": "42% shortage"
+  },
+  "prosp.ai_chain": {
+    "zh": "AI算力链",
+    "en": "AI Computing"
+  },
+  "prosp.q3": {
+    "zh": "预计Q3 2026",
+    "en": "Q3 2026 est."
+  },
+  "risk.title": {
+    "zh": "风险预警中心",
+    "en": "Risk Warning Center"
+  },
+  "risk.strategy": {
+    "zh": "应对策略",
+    "en": "Response Strategy"
+  },
+  "risk.strategy_text": {
+    "zh": "黄色预警：减仓20-30%，收紧止损。红色预警：仓位降至30%以下，可用期权对冲。始终对照你的持仓集中度来评估。",
+    "en": "Yellow: Reduce 20-30%, tighten stops. Red: Reduce to <30%, hedge with options. Always cross-check portfolio concentration."
+  },
+  "method.title": {
+    "zh": "投资方法论",
+    "en": "Investment Framework"
+  },
+  "method.rule_title": {
+    "zh": "科技产业传导的黄金规律",
+    "en": "The Golden Rule of Tech Cycles"
+  },
+  "method.rule_text": {
+    "zh": "上游先搭台，下游后唱戏。当上游产能爬坡、订单能见度清晰时，周期从概念期切换到业绩兑现期。关注维度：供需缺口(最重要) > 订单能见度 > 业绩兑现速度 > 政策支持 > 资金流向。",
+    "en": "Upstream builds the stage, downstream sings. When upstream capacity ramps and visibility solidifies, the cycle shifts from concept to earnings. Priority: Supply gap > Order visibility > Earnings delivery > Policy > Fund flow."
+  },
+  "method.screen_title": {
+    "zh": "快速筛选主线的5个角度",
+    "en": "5 Angles to Screen Threads"
+  },
+  "method.screen_1": {
+    "zh": "供需缺口：寻找>30%的紧缺",
+    "en": "Supply-Demand Gap: Look for >30% shortage"
+  },
+  "method.screen_2": {
+    "zh": "订单能见度：12个月以上在手订单",
+    "en": "Order Visibility: 12+ month backlog"
+  },
+  "method.screen_3": {
+    "zh": "业绩兑现：连续季度超预期",
+    "en": "Profit Delivery: Consecutive beats"
+  },
+  "method.screen_4": {
+    "zh": "政策顺风：政府/行业支持",
+    "en": "Policy Tailwind: Gov/industry support"
+  },
+  "method.screen_5": {
+    "zh": "资金流向：北向+机构持续流入",
+    "en": "Fund Flow: Northbound+institutional inflow"
+  },
+  "method.pitfall_title": {
+    "zh": "必须避开的3个误区",
+    "en": "3 Pitfalls to Avoid"
+  },
+  "method.pitfall_1": {
+    "zh": "追概念期无业绩的股票",
+    "en": "Chasing concept stocks without earnings"
+  },
+  "method.pitfall_2": {
+    "zh": "忽视估值分位——高PE+增速放缓=危险",
+    "en": "Ignoring PE percentile - high PE + slowing growth = danger"
+  },
+  "method.pitfall_3": {
+    "zh": "单一主线重仓无对冲",
+    "en": "Single thread concentration without hedging"
+  },
+  "method.position_title": {
+    "zh": "仓位管理规则",
+    "en": "Position Sizing Rules"
+  },
+  "method.pos_1": {
+    "zh": "概念期：最多10-20%，严格止损",
+    "en": "Phase 1 (Concept): Max 10-20%, tight stops"
+  },
+  "method.pos_2": {
+    "zh": "业绩爆发期：核心仓位40-60%，移动止损",
+    "en": "Phase 2 (Growth): Core 40-60%, trailing stops"
+  },
+  "method.pos_3": {
+    "zh": "分化期：降至20-30%，逐步止盈",
+    "en": "Phase 3 (Split): Reduce to 20-30%, take profits"
+  },
+  "method.pos_4": {
+    "zh": "成熟期：0-10%，退出或吃股息",
+    "en": "Phase 4 (Mature): 0-10%, exit or dividend plays"
+  },
+  "comp.title": {
+    "zh": "公司数据库",
+    "en": "Company Database"
+  },
+  "comp.search": {
+    "zh": "按名称或代码搜索...",
+    "en": "Search by name or code..."
+  },
+  "comp.note": {
+    "zh": "* 公司数据需要在服务器在线时点击刷新加载",
+    "en": "* Data loads when server is online. Click Refresh."
+  },
+  "comp.code": {
+    "zh": "代码",
+    "en": "Code"
+  },
+  "comp.name": {
+    "zh": "名称",
+    "en": "Name"
+  },
+  "comp.sector": {
+    "zh": "板块",
+    "en": "Sector"
+  },
+  "comp.mcap": {
+    "zh": "市值(亿)",
+    "en": "Mkt Cap(100M)"
+  },
+  "comp.change": {
+    "zh": "涨跌",
+    "en": "Change"
+  },
+  "reports.title": {
+    "zh": "研报中心",
+    "en": "Research Reports"
+  },
+  "reports.source": {
+    "zh": "* 研报来源：公开券商研究，每周更新",
+    "en": "* Sourced from public broker research. Updated weekly."
+  },
+  "history.title": {
+    "zh": "历史数据",
+    "en": "Historical Data"
+  },
+  "history.year": {
+    "zh": "年份",
+    "en": "Year"
+  },
+  "pf.locked": {
+    "zh": "🔒 请先登录",
+    "en": "🔒 Please Login"
+  },
+  "pf.locked_desc": {
+    "zh": "登录后可使用持仓管理和AI诊断",
+    "en": "Login to use portfolio and AI diagnosis"
+  },
+  "pf.login_btn": {
+    "zh": "👤 登录 / 注册",
+    "en": "👤 Login / Register"
+  },
+  "pf.title": {
+    "zh": "💼 持仓管理",
+    "en": "💼 Portfolio Management"
+  },
+  "pf.add": {
+    "zh": "+ 添加持仓",
+    "en": "+ Add Position"
+  },
+  "pf.csv": {
+    "zh": "📥 CSV导入",
+    "en": "📥 CSV Import"
+  },
+  "pf.ai": {
+    "zh": "🤖 AI诊断",
+    "en": "🤖 AI Diagnosis"
+  },
+  "pf.add_title": {
+    "zh": "📝 添加持仓",
+    "en": "📝 Add Position"
+  },
+  "pf.code": {
+    "zh": "代码",
+    "en": "Code"
+  },
+  "pf.name": {
+    "zh": "名称",
+    "en": "Name"
+  },
+  "pf.cost": {
+    "zh": "成本价",
+    "en": "Cost"
+  },
+  "pf.shares": {
+    "zh": "股数",
+    "en": "Shares"
+  },
+  "pf.chain": {
+    "zh": "产业链",
+    "en": "Chain"
+  },
+  "pf.btn_add": {
+    "zh": "添加",
+    "en": "Add"
+  },
+  "pf.csv_title": {
+    "zh": "📥 导入CSV",
+    "en": "📥 Import CSV"
+  },
+  "pf.csv_format": {
+    "zh": "格式: 代码,名称,成本,股数,产业链",
+    "en": "Format: code,name,cost,shares,chain"
+  },
+  "pf.csv_import": {
+    "zh": "导入",
+    "en": "Import"
+  },
+  "pf.total_cost": {
+    "zh": "总成本",
+    "en": "Total Cost"
+  },
+  "pf.total_val": {
+    "zh": "总市值",
+    "en": "Total Value"
+  },
+  "pf.pnl": {
+    "zh": "浮动盈亏",
+    "en": "Floating P&L"
+  },
+  "pf.pnl_pct": {
+    "zh": "盈亏比例",
+    "en": "P&L %"
+  },
+  "pf.wan": {
+    "zh": "万",
+    "en": "W"
+  },
+  "pf.single_risk": {
+    "zh": "⚠️ 单一持仓风险：仅持有1只股票，建议分散",
+    "en": "⚠️ Single position risk: only 1 stock held"
+  },
+  "pf.conc_warn": {
+    "zh": "⚠️ 集中度 ",
+    "en": "⚠️ Concentration "
+  },
+  "pf.conc_suffix": {
+    "zh": " 占比偏高",
+    "en": " ratio high"
+  },
+  "pf.conc_in": {
+    "zh": " 在 ",
+    "en": " in "
+  },
+  "pf.stock_col": {
+    "zh": "股票",
+    "en": "Stock"
+  },
+  "pf.cost_col": {
+    "zh": "成本价",
+    "en": "Cost"
+  },
+  "pf.price_col": {
+    "zh": "现价",
+    "en": "Price"
+  },
+  "pf.shares_col": {
+    "zh": "持仓",
+    "en": "Shares"
+  },
+  "pf.val_col": {
+    "zh": "市值",
+    "en": "Value"
+  },
+  "pf.edit": {
+    "zh": "编辑",
+    "en": "Edit"
+  },
+  "pf.edit_title": {
+    "zh": "✏️ 编辑持仓",
+    "en": "✏️ Edit Position"
+  },
+  "pf.save": {
+    "zh": "保存",
+    "en": "Save"
+  },
+  "pf.delete": {
+    "zh": "删除",
+    "en": "Delete"
+  },
+  "pf.delete_confirm": {
+    "zh": "确认删除？",
+    "en": "Confirm delete?"
+  },
+  "pf.select_csv": {
+    "zh": "请选择CSV文件",
+    "en": "Please select CSV file"
+  },
+  "pf.csv_err": {
+    "zh": "CSV格式错误",
+    "en": "CSV format error"
+  },
+  "pf.fill_all": {
+    "zh": "请完整填写",
+    "en": "Please fill all fields"
+  },
+  "pf.realtime_note": {
+    "zh": "* 现价来自实时行情（需启动服务器）",
+    "en": "* Real-time prices from data server"
+  },
+  "close": {
+    "zh": "关闭",
+    "en": "Close"
+  },
+  "event.06-05": {
+    "zh": "英伟达GTC大会",
+    "en": "NVIDIA GTC Conference"
+  },
+  "event.06-10": {
+    "zh": "HBM季度调价窗口",
+    "en": "HBM Quarterly Pricing"
+  },
+  "event.06-15": {
+    "zh": "工信部AI产业政策",
+    "en": "AI Industry Policy Release"
+  },
+  "event.06-20": {
+    "zh": "中际旭创半年报预告",
+    "en": "Zhongji Innolight H1 Preview"
+  },
+  "event.07-01": {
+    "zh": "VR200首批出货",
+    "en": "VR200 First Shipment"
+  },
+  "event.07-10": {
+    "zh": "半导体设备出货数据",
+    "en": "Equipment Shipment Data"
+  },
+  "event.type_conference": {
+    "zh": "行业会议",
+    "en": "Conference"
+  },
+  "event.type_pricing": {
+    "zh": "价格窗口",
+    "en": "Pricing"
+  },
+  "event.type_policy": {
+    "zh": "政策发布",
+    "en": "Policy"
+  },
+  "event.type_earnings": {
+    "zh": "公司财报",
+    "en": "Earnings"
+  },
+  "event.type_tech": {
+    "zh": "技术发布",
+    "en": "Tech"
+  },
+  "event.type_data": {
+    "zh": "数据发布",
+    "en": "Data"
+  },
+  "risk.optical": {
+    "zh": "1.6T光模块估值已达历史高位",
+    "en": "Optical module PE at 78% percentile"
+  },
+  "risk.optical_detail": {
+    "zh": "PE 45倍/78%分位，注意回调风险",
+    "en": "PE 45x / 78% historical, watch for pullback"
+  },
+  "risk.us_chip": {
+    "zh": "美国6月或宣布新半导体出口限制",
+    "en": "US may announce new chip export limits"
+  },
+  "risk.us_chip_detail": {
+    "zh": "关注设备/EDA领域影响，控制仓位",
+    "en": "Watch equipment/EDA sector, reduce position"
+  },
+  "risk.crowding": {
+    "zh": "AI算力短期交易拥挤度上升",
+    "en": "AI computing short-term crowding rising"
+  },
+  "risk.crowding_detail": {
+    "zh": "成交占比42%，接近历史极值",
+    "en": "Trading volume 42%, near historical extreme"
+  },
+  "risk.cat_market": {
+    "zh": "市场风险",
+    "en": "Market Risk"
+  },
+  "risk.cat_policy": {
+    "zh": "政策风险",
+    "en": "Policy Risk"
+  },
+  "risk.cat_industry": {
+    "zh": "产业风险",
+    "en": "Industry Risk"
+  },
+  "thread.ai_compute": {
+    "zh": "AI算力配套",
+    "en": "AI Computing"
+  },
+  "thread.storage": {
+    "zh": "存储芯片",
+    "en": "Storage Chips"
+  },
+  "thread.optical": {
+    "zh": "光芯片/光模块",
+    "en": "Optical Chips"
+  },
+  "thread.equipment": {
+    "zh": "国产半导体设备",
+    "en": "Semi Equipment"
+  },
+  "thread.huawei": {
+    "zh": "华为昇腾产业链",
+    "en": "Huawei Ascend"
+  },
+  "thread.driver_ai": {
+    "zh": "VR200量产+供需缺口42%",
+    "en": "VR200 mass production + 42% gap"
+  },
+  "thread.driver_storage": {
+    "zh": "AI服务器存储需求8倍增长",
+    "en": "AI server storage 8x growth"
+  },
+  "thread.driver_optical": {
+    "zh": "1.6T光模块需求爆发",
+    "en": "1.6T optical module boom"
+  },
+  "thread.driver_equipment": {
+    "zh": "国产替代加速",
+    "en": "Domestic substitution accelerates"
+  },
+  "thread.driver_huawei": {
+    "zh": "国产算力替代",
+    "en": "Domestic AI chip substitution"
+  },
+  "thread.action_heavy": {
+    "zh": "重点配置",
+    "en": "Heavy"
+  },
+  "thread.action_active": {
+    "zh": "积极配置",
+    "en": "Active"
+  },
+  "thread.action_swing": {
+    "zh": "波段操作",
+    "en": "Swing"
+  },
+  "thread.action_dips": {
+    "zh": "逢低布局",
+    "en": "Buy dips"
+  },
+  "thread.action_cautious": {
+    "zh": "谨慎配置",
+    "en": "Cautious"
+  },
+  "thread.stage_2e": {
+    "zh": "第二阶段初期",
+    "en": "Phase 2 Early"
+  },
+  "thread.stage_1l": {
+    "zh": "第一阶段末期",
+    "en": "Phase 1 Late"
+  },
+  "thread.stage_1m": {
+    "zh": "第一阶段中期",
+    "en": "Phase 1 Mid"
+  },
+  "thread.stage_2m": {
+    "zh": "第二阶段中期",
+    "en": "Phase 2 Mid"
+  },
+  "thread.dur_12_18": {
+    "zh": "12-18个月",
+    "en": "12-18mo"
+  },
+  "thread.dur_9_12": {
+    "zh": "9-12个月",
+    "en": "9-12mo"
+  },
+  "thread.dur_6_9": {
+    "zh": "6-9个月",
+    "en": "6-9mo"
+  },
+  "thread.dur_18_24": {
+    "zh": "18-24个月",
+    "en": "18-24mo"
+  },
+  "thread.dur_12_15": {
+    "zh": "12-15个月",
+    "en": "12-15mo"
+  },
+  "chain.mat": {
+    "zh": "材料",
+    "en": "Materials"
+  },
+  "chain.comp": {
+    "zh": "元器件",
+    "en": "Components"
+  },
+  "chain.mfg": {
+    "zh": "设备制造",
+    "en": "Manufacturing"
+  },
+  "chain.app": {
+    "zh": "应用",
+    "en": "Applications"
+  },
+  "chain.top": {
+    "zh": "最上游",
+    "en": "Top"
+  },
+  "chain.up": {
+    "zh": "上游",
+    "en": "Upstream"
+  },
+  "chain.mid": {
+    "zh": "中游",
+    "en": "Midstream"
+  },
+  "chain.down": {
+    "zh": "下游",
+    "en": "Downstream"
+  },
+  "chain.products_mat": {
+    "zh": "铜箔/光刻胶",
+    "en": "Copper foil/Photoresist"
+  },
+  "chain.products_comp": {
+    "zh": "光芯片/存储/GPU",
+    "en": "Optical chips/Storage/GPU"
+  },
+  "chain.products_mfg": {
+    "zh": "光模块/PCB/服务器",
+    "en": "Optical modules/PCB/Servers"
+  },
+  "chain.products_app": {
+    "zh": "大模型/AI应用",
+    "en": "LLM/AI Apps"
+  },
+  "chain.companies_mat": {
+    "zh": "鑫科材料/南大光电/华特气体",
+    "en": "Xinke/Nanda/Huate Gas"
+  },
+  "chain.companies_comp": {
+    "zh": "中际旭创/天孚通信/寒武纪",
+    "en": "Zhongji/Tianfu/Cambricon"
+  },
+  "chain.companies_mfg": {
+    "zh": "工业富联/浪潮信息/超声电子",
+    "en": "Foxconn/Inspur/Chaosheng"
+  },
+  "chain.companies_app": {
+    "zh": "科大讯飞/商汤/金山云",
+    "en": "iFlyTek/SenseTime/Kingsoft"
+  },
+  "hist.ai_compute": {
+    "zh": "AI算力",
+    "en": "AI Computing"
+  },
+  "hist.semi": {
+    "zh": "半导体",
+    "en": "Semiconductor"
+  },
+  "hist.optical": {
+    "zh": "光模块",
+    "en": "Optical"
+  },
+  "hist.adv_mfg": {
+    "zh": "先进制造",
+    "en": "Advanced Mfg"
+  },
+  "report.ai_infra": {
+    "zh": "AI算力基础设施：2026供应链深度拆解",
+    "en": "AI Computing Infrastructure: 2026 Supply Chain Deep Dive"
+  },
+  "report.ai_infra_sum": {
+    "zh": "VR200量产带动铜箔/PCB需求，建议超配上***材料",
+    "en": "VR200 mass production drives copper foil/PCB demand. Overweight upstream."
+  },
+  "report.hbm": {
+    "zh": "HBM市场展望：DDR5切换加速",
+    "en": "HBM Market Outlook: DDR5 Transition Accelerates"
+  },
+  "report.hbm_sum": {
+    "zh": "AI服务器单机存储需求增长8倍，HBM供应链受益至2027年",
+    "en": "AI server storage demand up 8x. HBM supply chain benefits through 2027."
+  },
+  "report.optical": {
+    "zh": "光模块1.6T周期：顶部还是半山腰？",
+    "en": "Optical Module 1.6T Cycle: Peak or Plateau?"
+  },
+  "report.optical_sum": {
+    "zh": "估值处于78%分位，建议波段操作、部分止盈",
+    "en": "PE at 78% percentile. Recommend swing trading, partial profit-taking."
+  },
+  "report.equipment": {
+    "zh": "半导体设备国产化进度报告",
+    "en": "Semiconductor Equipment Localization Progress"
+  },
+  "report.equipment_sum": {
+    "zh": "国产设备份额持续提升，18-24个月增长周期",
+    "en": "Domestic equipment share rising. 18-24 month growth cycle ahead."
+  },
+  "report.org_citic": {
+    "zh": "中信证券",
+    "en": "CITIC Securities"
+  },
+  "report.org_cicc": {
+    "zh": "中金公司",
+    "en": "CICC"
+  },
+  "report.org_huatai": {
+    "zh": "华泰证券",
+    "en": "Huatai Securities"
+  },
+  "report.org_gf": {
+    "zh": "广发证券",
+    "en": "GF Securities"
+  }
+}

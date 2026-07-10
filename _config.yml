@@ -1,0 +1,6 @@
+﻿# GitHub Pages config
+title: 投资观察站
+description: 四因子看板 · 量能监测 · 盘后复盘
+include:
+  - data
+  - .nojekyll

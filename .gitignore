@@ -1,0 +1,36 @@
+﻿# Python
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Generated data
+snapshots/
+volume_history.json
+volume_yesterday.json
+stock_info_cache.json
+daily_snapshots.json
+
+# Server logs
+server_error.log
+server_ready.log
+server_log.txt
+server_stderr.txt
+ds_ready.log
+
+# Temp files
+_*.py
+_*.txt
+*.bak*
+chip_out.txt
+factor_section.txt
+import_test2_err.log
+dataservice_lines.txt
+dataservice_backup.md
+
+# Old backup
+_old/
+
+# OS
+.DS_Store
+Thumbs.db

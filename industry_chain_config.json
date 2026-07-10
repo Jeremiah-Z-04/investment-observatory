@@ -1,0 +1,1187 @@
+{
+ "industries": [
+  {
+   "id": "ai_compute",
+   "name": "AI算力产业链",
+   "description": "涵盖AI算力从上游芯片/材料到下游应用的全产业链环节",
+   "boom_score": 82,
+   "nodes": [
+    {
+     "id": "ai_root",
+     "name": "AI算力产业链",
+     "level": "root",
+     "parent_id": null,
+     "boom_score": 82,
+     "logic": "",
+     "barrier": "",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "ai_up",
+      "ai_mid",
+      "ai_down"
+     ]
+    },
+    {
+     "id": "ai_up",
+     "name": "上游 供给端",
+     "level": "上游",
+     "parent_id": "ai_root",
+     "boom_score": 66,
+     "logic": "AI算力需求爆发驱动上游材料/设备/零部件/能源全链条景气",
+     "barrier": "技术壁垒高，产能受限",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "ai_energy",
+      "ai_material",
+      "ai_equip",
+      "ai_part"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "ai_energy",
+     "name": "能源电力配套",
+     "level": "上游",
+     "parent_id": "ai_up",
+     "boom_score": 66,
+     "logic": "AI算力高能耗驱动液冷/UPS需求爆发，单机柜功率密度从5kW提升至50kW",
+     "barrier": "认证壁垒高，客户粘性强，绑定英伟达/超微等核心客户",
+     "stocks": [
+      {
+       "code": "300499",
+       "name": "高澜股份"
+      },
+      {
+       "code": "002837",
+       "name": "英维克"
+      },
+      {
+       "code": "002851",
+       "name": "麦格米特"
+      },
+      {
+       "code": "688676",
+       "name": "金盘科技"
+      },
+      {
+       "code": "300693",
+       "name": "盛弘股份"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "AI???????5kW/?????50kW+,??/UPS?????????",
+      "trend": "??3??????",
+      "core_driver": "GB200?????140kW,??????15%?60%??"
+     }
+    },
+    {
+     "id": "ai_material",
+     "name": "半导体核心材料",
+     "level": "上游",
+     "parent_id": "ai_up",
+     "boom_score": 66,
+     "logic": "国产替代加速，HBM/光掩膜需求旺盛，磷化铟等三代半材料扩产",
+     "barrier": "技术壁垒极高，验证周期长，客户认证难度大",
+     "stocks": [
+      {
+       "code": "300666",
+       "name": "江丰电子"
+      },
+      {
+       "code": "002371",
+       "name": "北方华创"
+      },
+      {
+       "code": "688012",
+       "name": "中微公司"
+      },
+      {
+       "code": "688019",
+       "name": "安集科技"
+      },
+      {
+       "code": "300236",
+       "name": "上海新阳"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "HBM3e/WLO????????????????,???????",
+      "trend": "HBM?????2025??",
+      "core_driver": "AI??HBM????80GB?144GB??,?????1.8"
+     }
+    },
+    {
+     "id": "ai_equip",
+     "name": "半导体生产设备",
+     "level": "上游",
+     "parent_id": "ai_up",
+     "boom_score": 66,
+     "logic": "晶圆厂扩产驱动设备需求持续增长，国产化率从15%向30%突破",
+     "barrier": "光刻机等核心设备高度垄断，ASML/EUV一机难求",
+     "stocks": [
+      {
+       "code": "688012",
+       "name": "中微公司"
+      },
+      {
+       "code": "002371",
+       "name": "北方华创"
+      },
+      {
+       "code": "300604",
+       "name": "长川科技"
+      },
+      {
+       "code": "688072",
+       "name": "中科飞测"
+      },
+      {
+       "code": "688037",
+       "name": "芯源微"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "ASML EUV???????50?,??/????????14-18??",
+      "trend": "2025???????????",
+      "core_driver": "?????2024-2026?????4000???,??????"
+     }
+    },
+    {
+     "id": "ai_part",
+     "name": "核心零部件",
+     "level": "上游",
+     "parent_id": "ai_up",
+     "boom_score": 66,
+     "logic": "AI芯片/800G光模块需求爆发，高速连接器/交换机升级换代",
+     "barrier": "高端芯片设计/制造壁垒，先进制程产能紧缺",
+     "stocks": [
+      {
+       "code": "300308",
+       "name": "中际旭创"
+      },
+      {
+       "code": "688041",
+       "name": "海光信息"
+      },
+      {
+       "code": "002920",
+       "name": "德赛西威"
+      },
+      {
+       "code": "300394",
+       "name": "天孚通信"
+      },
+      {
+       "code": "688498",
+       "name": "源杰科技"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "800G???DSP??/EML???????,?????????",
+      "trend": "??????,?????????",
+      "core_driver": "800G???2025???????3,?DSP???????"
+     }
+    },
+    {
+     "id": "ai_mid",
+     "name": "中游 算力制造运营",
+     "level": "中游",
+     "parent_id": "ai_root",
+     "boom_score": 66,
+     "logic": "算力硬件制造与运营服务双轮驱动，智算中心建设加速",
+     "barrier": "量产能力+客户认证，电力资源稀缺",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "ai_hardware",
+      "ai_cloud"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "ai_hardware",
+     "name": "硬件制造",
+     "level": "中游",
+     "parent_id": "ai_mid",
+     "boom_score": 66,
+     "logic": "AI服务器/光模块订单饱满，先进封装(CoWoS)产能紧缺",
+     "barrier": "量产能力+客户认证，先进封装产能瓶颈",
+     "stocks": [
+      {
+       "code": "300308",
+       "name": "中际旭创"
+      },
+      {
+       "code": "000977",
+       "name": "浪潮信息"
+      },
+      {
+       "code": "688256",
+       "name": "寒武纪"
+      },
+      {
+       "code": "002916",
+       "name": "深南电路"
+      },
+      {
+       "code": "688036",
+       "name": "传音控股"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "AI???GPU???CoWoS????,???????????",
+      "trend": "CoWoS??????,???????",
+      "core_driver": "NVIDIA H100/B200???52????16?,?????"
+     }
+    },
+    {
+     "id": "ai_cloud",
+     "name": "算力运营",
+     "level": "中游",
+     "parent_id": "ai_mid",
+     "boom_score": 66,
+     "logic": "智算中心建设加速，算力租赁模式兴起，云服务商资本开支持续增长",
+     "barrier": "资金壁垒高，电力资源稀缺，芯片供应受限",
+     "stocks": [
+      {
+       "code": "300442",
+       "name": "润泽科技"
+      },
+      {
+       "code": "603881",
+       "name": "数据港"
+      },
+      {
+       "code": "000938",
+       "name": "紫光股份"
+      },
+      {
+       "code": "688158",
+       "name": "优刻得"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "???????????200?,??????????",
+      "trend": "????,????????",
+      "core_driver": "?????+??????????????,??????"
+     }
+    },
+    {
+     "id": "ai_down",
+     "name": "下游 需求应用",
+     "level": "下游",
+     "parent_id": "ai_root",
+     "boom_score": 66,
+     "logic": "大模型军备竞赛驱动AI应用全面落地，各行业加速AI化",
+     "barrier": "算法+数据+算力三重壁垒，落地场景验证周期长",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "ai_genai",
+      "ai_industry"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "ai_genai",
+     "name": "通用AI应用",
+     "level": "下游",
+     "parent_id": "ai_down",
+     "boom_score": 66,
+     "logic": "大模型军备竞赛，Agent/生成式应用快速落地，多模态能力持续进化",
+     "barrier": "算法+数据+算力三重壁垒，人才极度稀缺",
+     "stocks": [
+      {
+       "code": "688111",
+       "name": "金山办公"
+      },
+      {
+       "code": "002230",
+       "name": "科大讯飞"
+      },
+      {
+       "code": "300418",
+       "name": "昆仑万维"
+      },
+      {
+       "code": "688327",
+       "name": "云从科技"
+      },
+      {
+       "code": "300624",
+       "name": "万兴科技"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "??????200?,???????,API???????",
+      "trend": "??24?????????",
+      "core_driver": "Token???????90%+,??????????"
+     }
+    },
+    {
+     "id": "ai_iapp",
+     "name": "行业AI应用",
+     "level": "下游",
+     "parent_id": "ai_down",
+     "boom_score": 66,
+     "logic": "自动驾驶/工业AI/医疗AI多点开花，AI+各行业渗透率快速提升",
+     "barrier": "行业know-how+数据积累，合规要求高",
+     "stocks": [
+      {
+       "code": "002920",
+       "name": "德赛西威"
+      },
+      {
+       "code": "688208",
+       "name": "道通科技"
+      },
+      {
+       "code": "300015",
+       "name": "爱尔眼科"
+      },
+      {
+       "code": "688023",
+       "name": "奥普特"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "AI???????????,??????????,??????",
+      "trend": "???????????",
+      "core_driver": "AI?????????,???????????"
+     }
+    }
+   ]
+  },
+  {
+   "id": "semiconductor",
+   "name": "半导体产业链",
+   "description": "涵盖半导体从上游材料设备到下游芯片设计的全产业链",
+   "boom_score": 75,
+   "nodes": [
+    {
+     "id": "sc_root",
+     "name": "半导体产业链",
+     "level": "root",
+     "parent_id": null,
+     "boom_score": 75,
+     "logic": "",
+     "barrier": "",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "sc_up",
+      "sc_mid",
+      "sc_down"
+     ]
+    },
+    {
+     "id": "sc_up",
+     "name": "上游 材料设备",
+     "level": "上游",
+     "parent_id": "sc_root",
+     "boom_score": 66,
+     "logic": "半导体景气周期上行带动上游材料设备需求，国产化替代加速",
+     "barrier": "高端设备/材料被日美垄断，国产替代空间大",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "sc_si",
+      "sc_chem",
+      "sc_litho",
+      "sc_test"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "sc_si",
+     "name": "硅片/衬底",
+     "level": "上游",
+     "parent_id": "sc_up",
+     "boom_score": 66,
+     "logic": "大硅片需求随晶圆厂产能扩张持续增长，12英寸硅片国产化率不足20%",
+     "barrier": "拉晶/切割工艺壁垒高，验证周期长",
+     "stocks": [
+      {
+       "code": "688126",
+       "name": "沪硅产业"
+      },
+      {
+       "code": "300054",
+       "name": "鼎龙股份"
+      },
+      {
+       "code": "688361",
+       "name": "中科飞测"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "12???????????20%,????/SUMCO?????2026?",
+      "trend": "??????????2-3?",
+      "core_driver": "????????????85%,????????"
+     }
+    },
+    {
+     "id": "sc_chem",
+     "name": "电子化学品/气体",
+     "level": "上游",
+     "parent_id": "sc_up",
+     "boom_score": 66,
+     "logic": "芯片制程微缩驱动电子特气/光刻胶/湿电子化学品需求量和纯度要求同步提升",
+     "barrier": "纯度要求极高，客户认证周期2-3年",
+     "stocks": [
+      {
+       "code": "688019",
+       "name": "安集科技"
+      },
+      {
+       "code": "300236",
+       "name": "上海新阳"
+      },
+      {
+       "code": "002409",
+       "name": "雅克科技"
+      },
+      {
+       "code": "688065",
+       "name": "凯赛生物"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "ArF???/?????????????????",
+      "trend": "??????,??1-2??????????",
+      "core_driver": "??????????15%?30%?????"
+     }
+    },
+    {
+     "id": "sc_litho",
+     "name": "光刻/刻蚀/薄膜设备",
+     "level": "上游",
+     "parent_id": "sc_up",
+     "boom_score": 66,
+     "logic": "晶圆厂大规模扩产，刻蚀/薄膜沉积/清洗设备需求持续旺盛",
+     "barrier": "核心设备技术壁垒极高，光刻机被ASML垄断",
+     "stocks": [
+      {
+       "code": "688012",
+       "name": "中微公司"
+      },
+      {
+       "code": "002371",
+       "name": "北方华创"
+      },
+      {
+       "code": "300604",
+       "name": "长川科技"
+      },
+      {
+       "code": "688037",
+       "name": "芯源微"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "EUV???ASML????,??????????",
+      "trend": "????????????",
+      "core_driver": "??????????/CVD/???????????"
+     }
+    },
+    {
+     "id": "sc_test",
+     "name": "测试/封装设备",
+     "level": "上游",
+     "parent_id": "sc_up",
+     "boom_score": 66,
+     "logic": "先进封装需求爆发带动测试/封装设备需求增长",
+     "barrier": "与晶圆厂工艺深度绑定，切换成本高",
+     "stocks": [
+      {
+       "code": "300604",
+       "name": "长川科技"
+      },
+      {
+       "code": "688072",
+       "name": "中科飞测"
+      },
+      {
+       "code": "300567",
+       "name": "精测电子"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "?????????Teradyne/Advantest,??????????",
+      "trend": "2-3??????????30%",
+      "core_driver": "?????????????,????????"
+     }
+    },
+    {
+     "id": "sc_mid",
+     "name": "中游 制造封测",
+     "level": "中游",
+     "parent_id": "sc_root",
+     "boom_score": 66,
+     "logic": "晶圆代工产能利用率回升，先进封装成为后摩尔时代核心",
+     "barrier": "重资产投入，先进制程技术门槛极高",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "sc_foundry",
+      "sc_pack"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "sc_foundry",
+     "name": "晶圆代工",
+     "level": "中游",
+     "parent_id": "sc_mid",
+     "boom_score": 66,
+     "logic": "产能利用率从底部回升，AI芯片驱动5nm/3nm订单饱满",
+     "barrier": "资本开支巨大，先进制程仅台积电/三星/英特尔三足鼎立",
+     "stocks": [
+      {
+       "code": "688981",
+       "name": "中芯国际"
+      },
+      {
+       "code": "688396",
+       "name": "华润微"
+      },
+      {
+       "code": "002129",
+       "name": "中环股份"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "??????????????,??AI????????",
+      "trend": "AI?????,?????",
+      "core_driver": "AI????5nm/3nm??,28nm????????????75%"
+     }
+    },
+    {
+     "id": "sc_pack",
+     "name": "先进封装",
+     "level": "中游",
+     "parent_id": "sc_mid",
+     "boom_score": 66,
+     "logic": "CoWoS/2.5D/3D封装产能紧缺，AI芯片需求驱动先进封装量价齐升",
+     "barrier": "技术门槛高，设备投资大，客户验证周期长",
+     "stocks": [
+      {
+       "code": "002156",
+       "name": "通富微电"
+      },
+      {
+       "code": "600584",
+       "name": "长电科技"
+      },
+      {
+       "code": "688262",
+       "name": "国芯科技"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "CoWoS????????,??????????AI??????",
+      "trend": "??2025H2????????",
+      "core_driver": "AI??CoWoS????100%+,?????50%,??????"
+     }
+    },
+    {
+     "id": "sc_down",
+     "name": "下游 设计应用",
+     "level": "下游",
+     "parent_id": "sc_root",
+     "boom_score": 66,
+     "logic": "AI/汽车电子/IoT驱动芯片需求结构升级",
+     "barrier": "EDA工具+IP核生态壁垒，先进制程设计难度大增",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "sc_gpu",
+      "sc_mcu",
+      "sc_storage"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "sc_gpu",
+     "name": "AI芯片/GPU",
+     "level": "下游",
+     "parent_id": "sc_down",
+     "boom_score": 66,
+     "logic": "大模型训练推理需求爆发，GPU/NPU/XPU百花齐放",
+     "barrier": "生态壁垒(CUDA)，高算力芯片设计难度极大",
+     "stocks": [
+      {
+       "code": "688041",
+       "name": "海光信息"
+      },
+      {
+       "code": "688256",
+       "name": "寒武纪"
+      },
+      {
+       "code": "002049",
+       "name": "紫光国微"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "AI????????,??GPU????,??????",
+      "trend": "????????",
+      "core_driver": "??????????,???????????"
+     }
+    },
+    {
+     "id": "sc_mcu",
+     "name": "MCU/模拟芯片",
+     "level": "下游",
+     "parent_id": "sc_down",
+     "boom_score": 66,
+     "logic": "消费电子复苏带动MCU需求回暖，但竞争加剧价格承压",
+     "barrier": "产品种类多，客户分散，国产替代空间大",
+     "stocks": [
+      {
+       "code": "688595",
+       "name": "芯海科技"
+      },
+      {
+       "code": "300661",
+       "name": "圣邦股份"
+      },
+      {
+       "code": "688536",
+       "name": "思瑞浦"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "MCU??????,????,Ti/ST???????",
+      "trend": "????,???AI?????",
+      "core_driver": "?????????,MCU????"
+     }
+    },
+    {
+     "id": "sc_storage",
+     "name": "存储芯片",
+     "level": "下游",
+     "parent_id": "sc_down",
+     "boom_score": 66,
+     "logic": "HBM需求爆发驱动存储景气上行，DDR5渗透率持续提升",
+     "barrier": "技术壁垒高，三星/海力士/美光三强格局稳固",
+     "stocks": [
+      {
+       "code": "688525",
+       "name": "佰维存储"
+      },
+      {
+       "code": "300042",
+       "name": "朗科科技"
+      },
+      {
+       "code": "688110",
+       "name": "东芯股份"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "HBM3e?????/?????,DDR5??????????",
+      "trend": "HBM??,DDR5??",
+      "core_driver": "HBM???AI???????,???????????"
+     }
+    }
+   ]
+  },
+  {
+   "id": "robot",
+   "name": "人形机器人产业链",
+   "description": "涵盖人形机器人从核心零部件到整机应用的全产业链",
+   "boom_score": 78,
+   "nodes": [
+    {
+     "id": "rb_root",
+     "name": "人形机器人产业链",
+     "level": "root",
+     "parent_id": null,
+     "boom_score": 78,
+     "logic": "",
+     "barrier": "",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "rb_up",
+      "rb_mid",
+      "rb_down"
+     ]
+    },
+    {
+     "id": "rb_up",
+     "name": "上游 核心零部件",
+     "level": "上游",
+     "parent_id": "rb_root",
+     "boom_score": 66,
+     "logic": "人形机器人量产初期，核心零部件供应商率先受益，国产替代空间巨大",
+     "barrier": "精密加工能力、规模化量产能力",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "rb_motor",
+      "rb_reducer",
+      "rb_sensor",
+      "rb_battery"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "rb_motor",
+     "name": "伺服电机/驱动器",
+     "level": "上游",
+     "parent_id": "rb_up",
+     "boom_score": 66,
+     "logic": "人形机器人全身至少40个关节电机，单台价值量约2万元",
+     "barrier": "高精度伺服控制算法，量产一致性要求高",
+     "stocks": [
+      {
+       "code": "300124",
+       "name": "汇川技术"
+      },
+      {
+       "code": "002747",
+       "name": "埃斯顿"
+      },
+      {
+       "code": "688698",
+       "name": "伟创电气"
+      },
+      {
+       "code": "688280",
+       "name": "精进电动"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "??????????????????,????????/??",
+      "trend": "??????,2-3?????",
+      "core_driver": "????????40+?????,??????"
+     }
+    },
+    {
+     "id": "rb_reducer",
+     "name": "减速器/丝杠",
+     "level": "上游",
+     "parent_id": "rb_up",
+     "boom_score": 66,
+     "logic": "谐波减速器+行星滚柱丝杠是人形机器人核心传动部件，单台价值量3-5万元",
+     "barrier": "精密加工能力，谐波减速器日企哈默纳科垄断",
+     "stocks": [
+      {
+       "code": "002747",
+       "name": "埃斯顿"
+      },
+      {
+       "code": "300124",
+       "name": "汇川技术"
+      },
+      {
+       "code": "300809",
+       "name": "华辰装备"
+      },
+      {
+       "code": "688017",
+       "name": "绿的谐波"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "???????????????,????????????????",
+      "trend": "1-2????????",
+      "core_driver": "????????14-20????,????????m?"
+     }
+    },
+    {
+     "id": "rb_sensor",
+     "name": "传感器/视觉",
+     "level": "上游",
+     "parent_id": "rb_up",
+     "boom_score": 66,
+     "logic": "六维力矩传感器/3D视觉/IMU是人形机器人感知系统核心",
+     "barrier": "高精度传感器技术壁垒高，海外供应商主导",
+     "stocks": [
+      {
+       "code": "688728",
+       "name": "格科微"
+      },
+      {
+       "code": "300567",
+       "name": "精测电子"
+      },
+      {
+       "code": "688023",
+       "name": "奥普特"
+      },
+      {
+       "code": "300802",
+       "name": "矩子科技"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "???????/3D???????????,????????",
+      "trend": "?????????????",
+      "core_driver": "????????????????????????5-10?"
+     }
+    },
+    {
+     "id": "rb_battery",
+     "name": "电池/电源管理",
+     "level": "上游",
+     "parent_id": "rb_up",
+     "boom_score": 66,
+     "logic": "人形机器人续航需求推动高能量密度电池/轻量化电源方案发展",
+     "barrier": "能量密度与安全性平衡，快充技术",
+     "stocks": [
+      {
+       "code": "300750",
+       "name": "宁德时代"
+      },
+      {
+       "code": "002074",
+       "name": "国轩高科"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????????,??????????????????????",
+      "trend": "?????,??????",
+      "core_driver": "??????????????????,????????"
+     }
+    },
+    {
+     "id": "rb_mid",
+     "name": "中游 整机集成",
+     "level": "中游",
+     "parent_id": "rb_root",
+     "boom_score": 66,
+     "logic": "人形机器人量产前夕，整机厂商加速产品迭代和产线建设",
+     "barrier": "运动控制算法+AI大模型融合能力",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "rb_humanoid",
+      "rb_control"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "rb_humanoid",
+     "name": "人形机器人整机",
+     "level": "中游",
+     "parent_id": "rb_mid",
+     "boom_score": 66,
+     "logic": "特斯拉Optimus/Figure AI/宇树科技等百花齐放，2025年有望小批量量产",
+     "barrier": "运动控制算法、AI决策模型、量产降本能力",
+     "stocks": [
+      {
+       "code": "688165",
+       "name": "埃夫特"
+      },
+      {
+       "code": "300024",
+       "name": "机器人"
+      },
+      {
+       "code": "002527",
+       "name": "新时达"
+      },
+      {
+       "code": "300161",
+       "name": "华中数控"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "?????????,??10+????????,????????",
+      "trend": "2025??????????",
+      "core_driver": "TeslaOptimus/Figure/???????????2025-2026"
+     }
+    },
+    {
+     "id": "rb_control",
+     "name": "控制系统/AI大脑",
+     "level": "中游",
+     "parent_id": "rb_mid",
+     "boom_score": 66,
+     "logic": "人形机器人需要端侧AI芯片+实时操作系统+运动控制算法的深度融合",
+     "barrier": "端侧大模型部署能力，实时控制系统经验",
+     "stocks": [
+      {
+       "code": "002230",
+       "name": "科大讯飞"
+      },
+      {
+       "code": "688256",
+       "name": "寒武纪"
+      },
+      {
+       "code": "300458",
+       "name": "全志科技"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "??AI??+????????????,???????",
+      "trend": "??????",
+      "core_driver": "?????????????????????"
+     }
+    },
+    {
+     "id": "rb_down",
+     "name": "下游 应用场景",
+     "level": "下游",
+     "parent_id": "rb_root",
+     "boom_score": 66,
+     "logic": "人形机器人从工厂走向家庭服务，商业场景不断拓展",
+     "barrier": "场景落地验证，安全性法规，成本控制",
+     "stocks": [],
+     "news": [],
+     "children": [
+      "rb_factory",
+      "rb_service"
+     ],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????",
+      "trend": "--",
+      "core_driver": "--"
+     }
+    },
+    {
+     "id": "rb_factory",
+     "name": "工业制造/仓储物流",
+     "level": "下游",
+     "parent_id": "rb_down",
+     "boom_score": 66,
+     "logic": "汽车/3C制造率先导入，仓储物流搬运场景需求明确",
+     "barrier": "与现有产线集成难度，ROI需要验证",
+     "stocks": [
+      {
+       "code": "300124",
+       "name": "汇川技术"
+      },
+      {
+       "code": "002747",
+       "name": "埃斯顿"
+      },
+      {
+       "code": "688165",
+       "name": "埃夫特"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "?????????????,???????????????",
+      "trend": "??????,????",
+      "core_driver": "?????????,??????????????ROI"
+     }
+    },
+    {
+     "id": "rb_service",
+     "name": "家庭服务/商业",
+     "level": "下游",
+     "parent_id": "rb_down",
+     "boom_score": 66,
+     "logic": "养老陪伴/家政服务/商业导览等长期市场空间广阔，但量产仍需时间",
+     "barrier": "安全性/法规/成本三重约束",
+     "stocks": [
+      {
+       "code": "002230",
+       "name": "科大讯飞"
+      },
+      {
+       "code": "300024",
+       "name": "机器人"
+      }
+     ],
+     "news": [],
+     "children": [],
+     "update_time": "2026-07-09 23:03",
+     "supply_gap": {
+      "level": 66,
+      "status": "u8f7b_u5ea6_u7d27_u7f3a",
+      "reason": "????????????,?????,???????",
+      "trend": "???????",
+      "core_driver": "???????????????,????????"
+     }
+    }
+   ]
+  }
+ ]
+}

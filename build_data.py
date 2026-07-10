@@ -1,4 +1,4 @@
-﻿import os, json, sys, time as _time
+import os, json, sys, time as _time
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(DIR, "data")
@@ -75,6 +75,16 @@ try:
             for f in h.get("factors", []): entry[f.get("id", "")] = f.get("score", 50)
             if h.get("_ts"): entry["ts"] = int(h["_ts"] * 1000)
             hist_clean.append(entry)
+    if not hist_clean:
+        try:
+            fp = os.path.join(DATA_DIR, "factors.json")
+            if os.path.exists(fp):
+                fd = json.load(open(fp, "r", encoding="utf-8"))
+                he = {"composite": fd.get("composite", 50), "ts": int(_time.time() * 1000)}
+                for fi in fd.get("factors", []): he[fi.get("id","")] = fi.get("score", 50)
+                hist_clean = [he]
+        except:
+            pass
     with open(os.path.join(DATA_DIR, "factors_history.json"), "w", encoding="utf-8") as f: json.dump({"success": True, "data": hist_clean}, f, ensure_ascii=False)
     print(f"  {len(hist_clean)} points")
 except Exception as e: print(f"  error: {e}")

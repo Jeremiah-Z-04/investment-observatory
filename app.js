@@ -47,12 +47,20 @@ var S = {
   init: function() {
     var self = this;
     S.server = window.location.protocol + "//" + window.location.host;
+    // Auto-detect static mode (GitHub Pages / file://)
+    if (window.location.hostname.indexOf("github.io") >= 0 || window.location.protocol === "file:" || window.location.hostname.indexOf("pages.dev") >= 0) {
+      S.staticMode = true;
+    }
     var lb = document.getElementById("langBtn");
     if (lb) lb.textContent = S.lang === "zh" ? "EN" : "\u4e2d\u6587";
     document.querySelectorAll(".nav-item").forEach(function(el) {
       el.addEventListener("click", function() { self.nav(el.dataset.page); });
     });
     S.nav("home");
+    if (S.staticMode) {
+      S.setStatus("\u52c3\u7269\u56fe", "#a78bfa");
+      setTimeout(function(){ S.refresh(); }, 100);
+    } else {
     fetch(S.server + "/api/ping").then(function(r){return r.json();}).then(function(d){
       if (d.status === "ok") {
         S.online = true; S.setStatus("\u5728\u7ebf", "#00d4aa"); S.lastTs = d.time;
@@ -61,7 +69,9 @@ var S = {
         S.refresh();
       }
     }).catch(function(){ S.setStatus("\u79bb\u7ebf", "#ff4d6a"); S.refresh(); });
+    }
     setInterval(function(){
+      if (!S.staticMode) {
       fetch(S.server + "/api/ping").then(function(r){return r.json();}).then(function(d){
         if (d.status === "ok") {
           S.online = true; S.setStatus("\u5728\u7ebf", "#00d4aa");
@@ -69,6 +79,7 @@ var S = {
           if (ts) ts.textContent = d.time;
         }
       }).catch(function(){ S.online = false; S.setStatus("\u79bb\u7ebf", "#ff4d6a"); });
+      }
     }, 30000);
   },
 

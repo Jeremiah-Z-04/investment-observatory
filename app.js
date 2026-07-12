@@ -58,7 +58,7 @@ var S = {
     });
     S.nav("home");
     if (S.staticMode) {
-      S.setStatus("\u52c3\u7269\u56fe", "#a78bfa");
+      S.setStatus("离线版", "#5a6599");
       setTimeout(function(){ S.refresh(); }, 100);
     } else {
     fetch(S.server + "/api/ping").then(function(r){return r.json();}).then(function(d){

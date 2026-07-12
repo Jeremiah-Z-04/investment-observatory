@@ -134,10 +134,10 @@ var S = {
 
   refresh: function() {
     if (S.page === "home") {
-      fetch(S.server + "/api/factors").then(function(r){return r.json();}).then(function(d){
+      fetch(S.apiUrl("factors")).then(function(r){return r.json();}).then(function(d){
         S.updateHomeData(d);
       }).catch(function(){});
-      fetch(S.server + "/api/factors/history").then(function(r){return r.json();}).then(function(d){
+      fetch(S.apiUrl("factors/history")).then(function(r){return r.json();}).then(function(d){
         if (d.success && d.data) S.renderSentimentTrend(d.data);
       }).catch(function(){});
     }
@@ -186,7 +186,7 @@ var S = {
     S.renderReviewForm();
   },
   loadReviewSummary: function() {
-    fetch(S.server + '/api/review/summary').then(function(r){return r.json();}).then(function(d){
+    fetch(S.apiUrl("review/summary")).then(function(r){return r.json();}).then(function(d){
       if (d.success) {
         S.reviewSummaryData = d;
         S.renderReviewForm();
@@ -912,7 +912,7 @@ var S = {
     var ts = document.getElementById("reviewTs");
     if (ts) ts.textContent = new Date().toLocaleTimeString();
     var self = this;
-    fetch(S.server + "/api/review/stocks").then(function(r){return r.json();}).then(function(d){
+    fetch(S.apiUrl("review/stocks")).then(function(r){return r.json();}).then(function(d){
       if (d.success && d.data) {
         S.reviewStocks = d.data;
         var src = document.getElementById("reviewSource");
@@ -981,7 +981,7 @@ var S = {
     var ts = document.getElementById("volumeTs");
     if (ts) ts.textContent = new Date().toLocaleTimeString();
     var self = this;
-    fetch(S.server + "/api/volume/monitor").then(function(r){return r.json();}).then(function(d){
+    fetch(S.apiUrl("volume/monitor")).then(function(r){return r.json();}).then(function(d){
       if (!d.success && !d.is_trading) return;
       var data = d.data || d;
       var isTrading = d.is_trading || data.is_trading || false;

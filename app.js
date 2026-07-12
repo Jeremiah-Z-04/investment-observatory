@@ -32,6 +32,15 @@ var S = {
   lang: localStorage.getItem("inv_lang") || "zh", server: "",
   reviewTimer: null, volumeTimer: null, volumeData: [], pollTimer: null, homeData: null, mode: "trend",
   reviewStocks: [], _factorDetails: {},
+  staticMode: false,
+  _apiMap: { 'ping': 'data/ping.json', 'factors': 'data/factors.json', 'factors/history': 'data/factors_history.json', 'volume/monitor': 'data/volume_monitor.json', 'review/summary': 'data/review_summary.json', 'review/stocks': 'data/review_stocks.json', 'stock/search': 'data/stock_search.json' },
+  apiUrl: function(path) {
+    if (this.staticMode) {
+      var mapped = this._apiMap[path] || ('data/' + path.replace(/\//g,'_') + '.json');
+      return './' + mapped;
+    }
+    return this.server + '/api/' + path;
+  },
 
   t: function(k) {
     var e = T[k]; return e ? (e[S.lang] || e.en || k) : k;

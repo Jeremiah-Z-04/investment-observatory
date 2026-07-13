@@ -1577,10 +1577,13 @@ def unified_refresh():
     except:
         pass
     elapsed = _stime.time() - cycle_start
-    # === Supabase sync: factor scores (every cycle) ===
+    # === Supabase sync: factor scores (every cycle, active compute) ===
     if supabase_service and supabase_service.is_available():
         try:
-            fct = (cache.get("factors_score") or {}).get("data") or {}
+            import factors_engine
+            fct = factors_engine.calc_all_factors(
+                lambda k: (cache.get(k) or {}).get("data")
+            )
             if fct and fct.get("composite"):
                 supabase_service.sync_factor_scores(
                     fct.get("composite", 50),

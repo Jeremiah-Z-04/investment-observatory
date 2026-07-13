@@ -54,13 +54,66 @@ class SupabaseClient:
         return self._request('GET', query, use_service=False)
 
 
-# --- Global client ---
+# --- Global client and state ---
 _supabase = None
+_connection_state = {"available": False, "checked_at": 0}
+_CONN_CHECK_TTL = 30
+
+_sync_state = {
+    "last_sync_time": None,
+    "last_sync_success": False,
+    "consecutive_errors": 0,
+    "total_synced": 0
+}
+
+def check_connection():
+    """Real connection check -- pings Supabase REST API to verify reachability"""
+    if _supabase is None:
+        return False
+    try:
+        result = _supabase.select('factor_scores', columns='id', limit=1)
+        # result is None on HTTP error, [] on empty table (both OK for connectivity)
+        return result is not None
+    except Exception:
+        return False
+
+def is_available():
+    """Check if Supabase is available, with 30s caching to avoid excessive pings"""
+    global _connection_state
+    now = time.time()
+    if now - _connection_state["checked_at"] < _CONN_CHECK_TTL:
+        return _connection_state["available"]
+    _connection_state["checked_at"] = now
+    _connection_state["available"] = check_connection()
+    return _connection_state["available"]
+
+def record_sync_result(success):
+    """Record sync outcome for health tracking"""
+    global _sync_state
+    if success:
+        _sync_state["last_sync_time"] = time.time()
+        _sync_state["last_sync_success"] = True
+        _sync_state["consecutive_errors"] = 0
+        _sync_state["total_synced"] += 1
+    else:
+        _sync_state["last_sync_success"] = False
+        _sync_state["consecutive_errors"] += 1
+
+def get_status():
+    """Get full Supabase connection and sync health status"""
+    return {
+        "connected": check_connection() if _supabase else False,
+        "configured": _supabase is not None,
+        "last_sync": time.strftime("%H:%M:%S", time.localtime(_sync_state["last_sync_time"])) if _sync_state["last_sync_time"] else None,
+        "last_sync_success": _sync_state["last_sync_success"],
+        "consecutive_errors": _sync_state["consecutive_errors"],
+        "total_synced": _sync_state["total_synced"]
+    }
 
 def init_supabase():
     global _supabase
     if _supabase is not None:
-        return _supabase is not None
+        return check_connection()
 
     url = os.environ.get('SUPABASE_URL', '')
     anon_key = os.environ.get('SUPABASE_ANON_KEY', '')
@@ -86,15 +139,16 @@ def init_supabase():
 
     if url and anon_key:
         _supabase = SupabaseClient(url, anon_key, service_key)
-        print('[supabase] connected: ' + url)
-        return True
+        if check_connection():
+            print('[supabase] connected and verified: ' + url)
+            return True
+        else:
+            print('[supabase] client created but connection failed, check network')
+            _supabase = None
+            return False
 
     print('[supabase] not configured, running without remote database')
     return False
-
-
-def is_available():
-    return _supabase is not None
 
 
 # ====================== Sync Functions ======================
@@ -117,9 +171,11 @@ def sync_factor_scores(composite, factors_list, outlook='neutral'):
             if fid in data and score is not None:
                 data[fid] = round(float(score), 2)
         _supabase.insert('factor_scores', data)
+        record_sync_result(True)
         return True
     except Exception as e:
         print('[supabase] sync_factor_scores error: ' + str(e))
+        record_sync_result(False)
         return False
 
 
@@ -146,9 +202,11 @@ def sync_volume_alerts(alert_list):
             })
         if batch:
             _supabase.insert('volume_alerts', batch)
+        record_sync_result(True)
         return True
     except Exception as e:
         print('[supabase] sync_volume_alerts error: ' + str(e))
+        record_sync_result(False)
         return False
 
 
@@ -174,9 +232,11 @@ def sync_market_snapshot(market_data):
             'max_board_height': market_data.get('max_board_height')
         }
         _supabase.insert('market_snapshots', data)
+        record_sync_result(True)
         return True
     except Exception as e:
         print('[supabase] sync_market_snapshot error: ' + str(e))
+        record_sync_result(False)
         return False
 
 
@@ -200,9 +260,11 @@ def sync_sector_rankings(sectors_list):
             })
         if batch:
             _supabase.insert('sector_rankings', batch)
+        record_sync_result(True)
         return True
     except Exception as e:
         print('[supabase] sync_sector_rankings error: ' + str(e))
+        record_sync_result(False)
         return False
 
 

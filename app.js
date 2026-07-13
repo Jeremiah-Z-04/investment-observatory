@@ -68,6 +68,8 @@ var S = {
       el.addEventListener("click", function() { self.nav(el.dataset.page); });
     });
     S.nav("home");
+    // Initial Supabase connection check
+    S.checkSupabaseStatus();
     if (S.staticMode) {
       S.setStatus("离线版", "#5a6599");
       setTimeout(function(){ S.refresh(); }, 100);
@@ -91,6 +93,7 @@ var S = {
         }
       }).catch(function(){ S.online = false; S.setStatus("\u79bb\u7ebf", "#ff4d6a"); });
       }
+      S.checkSupabaseStatus();
     }, 30000);
   },
 
@@ -1186,13 +1189,31 @@ filterVolumeStocks: function() {
   },
 
   checkSupabaseStatus: function() {
-    if (!S.staticMode) {
-      fetch(S.server + "/api/supabase/status").then(function(r){return r.json();}).then(function(d){
-        S.supabaseAvailable = d.available;
-        var src = document.getElementById('historySource');
-        if (src) src.textContent = d.available ? '\u6570\u636e\u6765\u6e90: Supabase' : '\u6570\u636e\u6765\u6e90: \u672c\u5730\u7f13\u5b58 (Supabase \u672a\u914d\u7f6e)';
-      }).catch(function(){ S.supabaseAvailable = false; });
-    }
+    if (S.staticMode) return;
+    fetch(S.server + "/api/supabase/status").then(function(r){return r.json();}).then(function(d){
+      if (!d.success) return;
+      S.supabaseAvailable = d.connected;
+      var icon = document.getElementById('dbIcon');
+      var dbStatus = document.getElementById('dbStatus');
+      if (!icon || !dbStatus) return;
+      if (d.connected) {
+        icon.style.color = '#00d4aa';
+        var txt = 'DB \u5728\u7ebf';
+        if (d.last_sync) txt += ' \u00b7 ' + d.last_sync;
+        if (d.total_synced) txt += ' \u00b7 ' + d.total_synced + '\u6b21';
+        dbStatus.innerHTML = '<span id="dbIcon" style="color:#00d4aa">\u25cf</span> ' + txt;
+      } else if (d.configured) {
+        dbStatus.innerHTML = '<span id="dbIcon" style="color:#ffb020">\u25cf</span> DB \u65ad\u5f00 (' + (d.consecutive_errors||0) + '\u6b21\u5931\u8d25)';
+        S.supabaseAvailable = false;
+      } else {
+        dbStatus.innerHTML = '<span id="dbIcon" style="color:#5a6599">\u25cf</span> DB \u672a\u914d\u7f6e';
+        S.supabaseAvailable = false;
+      }
+    }).catch(function(){
+      var dbStatus = document.getElementById('dbStatus');
+      if (dbStatus) dbStatus.innerHTML = '<span id="dbIcon" style="color:#ff4d6a">\u25cf</span> DB \u65e0\u54cd\u5e94';
+      S.supabaseAvailable = false;
+    });
   },
 
   setDefaultHistoryDates: function() {

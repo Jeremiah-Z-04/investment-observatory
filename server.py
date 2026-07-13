@@ -507,8 +507,11 @@ class H(http.server.BaseHTTPRequestHandler):
                     self.js({"success":True,"code":code,"ts":ts,"composite":result.get("composite",50),"outlook":result.get("outlook","neutral"),"factors":result.get("factors",[])})
 
             elif p == "/api/supabase/status":
-                available = supabase_service and supabase_service.is_available()
-                self.js({"success":True,"available":available,"ts":ts})
+                if supabase_service:
+                    st = supabase_service.get_status()
+                    self.js({"success":True,"ts":ts,**st})
+                else:
+                    self.js({"success":True,"connected":False,"configured":False,"ts":ts})
 
             elif p == "/api/history/factors":
                 import urllib.parse as up_hf

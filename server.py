@@ -188,12 +188,16 @@ class H(http.server.BaseHTTPRequestHandler):
                 rs = dataservice.cache.get("review_stocks")
                 if rs and rs.get("data"):
                     d = rs["data"]
+                    # Handle both list (raw from cache) and dict (wrapped) formats
+                    if isinstance(d, list):
+                        rlist = d
+                    else:
+                        rlist = d.get("list", [])
                     # 排序处理
                     import urllib.parse as up2
                     qs2 = up2.parse_qs(self.path.split("?")[1] if "?" in self.path else "")
                     sort_by = (qs2.get("sort") or [""])[0]
                     sort_limit = int((qs2.get("limit") or ["0"])[0]) if (qs2.get("limit") or [""])[0].isdigit() else 20
-                    rlist = d.get("list", [])
                     if sort_by == "amount":
                         rlist = sorted(rlist, key=lambda x: float(x.get("amount",0) or 0), reverse=True)
                     elif sort_by == "change":
@@ -201,7 +205,7 @@ class H(http.server.BaseHTTPRequestHandler):
                         rlist = sorted(rlist, key=lambda x: float(x.get("change",0) or 0), reverse=True)
                     if sort_limit > 0 and len(rlist) > sort_limit:
                         rlist = rlist[:sort_limit]
-                    self.js({"success":True,"data":rlist,"update_time":d.get("update_time",ts),"ts":ts,"stale":rs.get("stale",False),"data_source":d.get("source","fallback")})
+                    self.js({"success":True,"data":rlist,"update_time":d.get("update_time",ts) if isinstance(d, dict) else ts,"ts":ts,"stale":rs.get("stale",False),"data_source":d.get("source","fallback") if isinstance(d, dict) else "fallback"})
                 else:
                     self.js({"success":True,"data":[],"update_time":ts,"ts":ts})
             elif p == "/api/volume/monitor":

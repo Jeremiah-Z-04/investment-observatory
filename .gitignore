@@ -42,3 +42,6 @@ _old/
 # OS
 .DS_Store
 Thumbs.db
+
+# Supabase
+.env

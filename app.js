@@ -25,6 +25,7 @@ var T = {
   'comp.search': {zh:'按名称或代码搜索...',en:'Search by name or code...'},
   'comp.note': {zh:'数据需要点击刷新加载',en:'Data loads on refresh.'},
   'close': {zh:'关闭',en:'Close'},
+  'history.title': {zh:'历史数据中心',en:'Historical Data'},
 };
 
 var S = {
@@ -33,7 +34,8 @@ var S = {
   reviewTimer: null, volumeTimer: null, volumeData: [], pollTimer: null, homeData: null, mode: "trend",
   reviewStocks: [], _factorDetails: {},
   staticMode: false,
-  _apiMap: { 'ping': 'data/ping.json', 'factors': 'data/factors.json', 'factors/history': 'data/factors_history.json', 'volume/monitor': 'data/volume_monitor.json', 'review/summary': 'data/review_summary.json', 'review/stocks': 'data/review_stocks.json', 'stock/search': 'data/stock_search.json' },
+  supabaseAvailable: false, currentHistoryTab: 'factors',
+  _apiMap: { 'ping': 'data/ping.json', 'factors': 'data/factors.json', 'factors/history': 'data/factors_history.json', 'volume/monitor': 'data/volume_monitor.json', 'review/summary': 'data/review_summary.json', 'review/stocks': 'data/review_stocks.json', 'stock/search': 'data/stock_search.json', 'history/factors': 'data/history_factors.json', 'history/volume': 'data/history_volume.json', 'history/snapshots': 'data/history_snapshots.json', 'history/sectors': 'data/history_sectors.json' },
   apiUrl: function(path) {
     if (this.staticMode) {
       var mapped = this._apiMap[path] || ('data/' + path.replace(/\//g,'_') + '.json');
@@ -122,6 +124,9 @@ var S = {
       setTimeout(function(){ S.startReviewPolling(); }, 300);
     } else if (p === "review_summary") {
       setTimeout(function(){ S.loadReviewSummary(); }, 200);
+    } else if (p === "history") {
+      S.checkSupabaseStatus();
+      setTimeout(function(){ S.setDefaultHistoryDates(); }, 300);
     }
   },
 
@@ -1155,6 +1160,161 @@ filterVolumeStocks: function() {
     } else {
     fetch(S.server + "/api/review/watchlist/remove?code=" + code).then(function(r){return r.json();}).then(function(d){ if (d.success) { S.doReviewRefresh(); } }).catch(function(){});
     }
+  },
+
+  // ====================== History Page ======================
+  R_history: function() {
+    var h = '';
+    h += '<div class="flex-between mb16"><div class="section-title">' + S.t('history.title') + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted)" id="historySource">' + (S.supabaseAvailable ? '\u6570\u636e\u6765\u6e90: Supabase' : '\u6570\u636e\u6765\u6e90: \u672c\u5730\u7f13\u5b58') + '</div></div>';
+    h += '<div class="ai-tabs" style="margin-bottom:16px">';
+    h += '  <div class="ai-tab active" onclick="S.switchHistoryTab(\'factors\')">\u56e0\u5b50\u8d8b\u52bf</div>';
+    h += '  <div class="ai-tab" onclick="S.switchHistoryTab(\'volume\')">\u91cf\u80fd\u5f02\u52a8</div>';
+    h += '  <div class="ai-tab" onclick="S.switchHistoryTab(\'snapshots\')">\u5e02\u573a\u5feb\u7167</div>';
+    h += '  <div class="ai-tab" onclick="S.switchHistoryTab(\'sectors\')">\u677f\u5757\u6392\u884c</div>';
+    h += '</div>';
+    h += '<div class="filter-bar" style="margin-bottom:12px">';
+    h += '  <label style="font-size:11px;color:var(--muted)">\u65e5\u671f\u8303\u56f4:</label>';
+    h += '  <input type="date" id="hDateFrom" style="width:140px" onchange="S.loadHistoryData()">';
+    h += '  <span style="color:var(--muted)">\u81f3</span>';
+    h += '  <input type="date" id="hDateTo" style="width:140px" onchange="S.loadHistoryData()">';
+    h += '  <button class="btn btn-a btn-sm" onclick="S.loadHistoryData()">\u67e5\u8be2</button>';
+    h += '</div>';
+    h += '<div id="historyContent" class="anim-fade"><div style="text-align:center;padding:40px;color:var(--muted)">\u9009\u62e9\u65e5\u671f\u8303\u56f4\u540e\u70b9\u51fb\u67e5\u8be2</div></div>';
+    h += '<div id="historyChart" class="card" style="height:400px;display:none"><div class="chart-wrap" id="historyChartInner" style="height:360px"></div></div>';
+    return h;
+  },
+
+  checkSupabaseStatus: function() {
+    if (!S.staticMode) {
+      fetch(S.server + "/api/supabase/status").then(function(r){return r.json();}).then(function(d){
+        S.supabaseAvailable = d.available;
+        var src = document.getElementById('historySource');
+        if (src) src.textContent = d.available ? '\u6570\u636e\u6765\u6e90: Supabase' : '\u6570\u636e\u6765\u6e90: \u672c\u5730\u7f13\u5b58 (Supabase \u672a\u914d\u7f6e)';
+      }).catch(function(){ S.supabaseAvailable = false; });
+    }
+  },
+
+  setDefaultHistoryDates: function() {
+    var now = new Date();
+    var weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
+    var fromEl = document.getElementById('hDateFrom');
+    var toEl = document.getElementById('hDateTo');
+    if (fromEl) fromEl.value = weekAgo.toISOString().substring(0,10);
+    if (toEl) toEl.value = now.toISOString().substring(0,10);
+    S.loadHistoryData();
+  },
+
+  switchHistoryTab: function(tab) {
+    S.currentHistoryTab = tab;
+    document.querySelectorAll('.ai-tab').forEach(function(n){ n.classList.remove('active'); });
+    var labels = {factors:'\u56e0\u5b50', volume:'\u91cf\u80fd', snapshots:'\u5feb\u7167', sectors:'\u677f\u5757'};
+    document.querySelectorAll('.ai-tab').forEach(function(n){
+      if (n.textContent.indexOf(labels[tab] || '') >= 0) n.classList.add('active');
+    });
+    S.loadHistoryData();
+  },
+
+  loadHistoryData: function() {
+    var fromEl = document.getElementById('hDateFrom');
+    var toEl = document.getElementById('hDateTo');
+    var from = fromEl ? fromEl.value : '';
+    var to = toEl ? toEl.value : '';
+    var content = document.getElementById('historyContent');
+    var chartWrap = document.getElementById('historyChart');
+    if (!content) return;
+    content.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)">\u52a0\u8f7d\u4e2d...</div>';
+    var tab = S.currentHistoryTab;
+    var apiPath = ''; var params = '';
+    if (tab === 'factors') { apiPath = 'history/factors'; if (from) params += '&from=' + from; if (to) params += '&to=' + to; }
+    else if (tab === 'volume') { apiPath = 'history/volume'; if (to) params += '&date=' + to; }
+    else if (tab === 'snapshots') { apiPath = 'history/snapshots'; params += '&days=30'; }
+    else if (tab === 'sectors') { apiPath = 'history/sectors'; if (to) params += '&date=' + to; }
+    var url = S.apiUrl(apiPath) + (params ? '?' + params.substring(1) : '');
+    fetch(url).then(function(r){return r.json();}).then(function(d){
+      if (d.success && d.data) { S.renderHistoryContent(tab, d.data, d.source || 'unknown'); }
+      else { content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">\u6682\u65e0\u6570\u636e</div>'; if(chartWrap) chartWrap.style.display='none'; }
+    }).catch(function(e){
+      content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red)">\u52a0\u8f7d\u5931\u8d25: ' + e.message + '</div>';
+    });
+  },
+
+  renderHistoryContent: function(tab, data, source) {
+    var content = document.getElementById('historyContent');
+    var chartWrap = document.getElementById('historyChart');
+    if (!content) return;
+    if (tab === 'factors') {
+      var h = '<div class="text-sm text-muted mb8">\u5171 ' + data.length + ' \u6761\u8bb0\u5f55 | \u6765\u6e90: ' + source + '</div>';
+      h += '<table class="tbl"><thead><tr><th>\u65f6\u95f4</th><th>\u7efc\u5408</th><th>\u60c5\u7eea</th><th>\u677f\u5757</th><th>\u7b79\u7801</th><th>\u9694\u591c</th><th>\u5c55\u671b</th></tr></thead><tbody>';
+      var rows = data.slice(-100);
+      for (var i = rows.length - 1; i >= 0; i--) {
+        var r = rows[i]; var ts = r.recorded_at || r.ts || '';
+        h += '<tr><td>' + (ts.length > 16 ? ts.substring(11,19) : ts) + '</td>';
+        h += '<td style="font-weight:700;color:' + (r.composite >= 60 ? '#00d4aa' : r.composite >= 40 ? '#ffb020' : '#ff4d6a') + '">' + r.composite + '</td>';
+        h += '<td>' + (r.sentiment || '-') + '</td><td>' + (r.sector || '-') + '</td><td>' + (r.chip || '-') + '</td><td>' + (r.overnight || '-') + '</td>';
+        h += '<td>' + (r.outlook || '-') + '</td></tr>';
+      }
+      h += '</tbody></table>'; content.innerHTML = h;
+      if (chartWrap) { chartWrap.style.display = 'block'; setTimeout(function(){ S.renderHistoryFactorChart(data); }, 200); }
+    } else if (tab === 'volume') {
+      var h = '<div class="text-sm text-muted mb8">\u5171 ' + data.length + ' \u6761\u8bb0\u5f55 | \u6765\u6e90: ' + source + '</div>';
+      h += '<table class="tbl"><thead><tr><th>\u65f6\u95f4</th><th>\u4ee3\u7801</th><th>\u540d\u79f0</th><th>\u4ef7\u683c</th><th>\u6da8\u8dcc</th><th>\u6210\u4ea4\u91cf</th><th>\u91cf\u6bd4</th><th>\u677f\u5757</th></tr></thead><tbody>';
+      for (var i = 0; i < Math.min(data.length, 80); i++) {
+        var r = data[i]; var chgCls = (r.change||0) >= 0 ? '#00d4aa' : '#ff4d6a';
+        h += '<tr><td>' + (r.trigger_time || r.alert_time || '').substring(0,10) + '</td>';
+        h += '<td>' + r.code + '</td><td>' + r.name + '</td><td>' + r.price + '</td>';
+        h += '<td style="color:' + chgCls + '">' + ((r.change||0) >= 0 ? '+' : '') + r.change + '%</td>';
+        h += '<td>' + r.volume + '</td>';
+        h += '<td style="font-weight:700;color:var(--yellow)">' + (r.ratio ? r.ratio.toFixed(1) + 'x' : '-') + '</td>';
+        h += '<td>' + (r.sector || '-') + '</td></tr>';
+      }
+      h += '</tbody></table>'; content.innerHTML = h; if (chartWrap) chartWrap.style.display = 'none';
+    } else if (tab === 'snapshots') {
+      var h = '<div class="text-sm text-muted mb8">\u5171 ' + data.length + ' \u6761\u8bb0\u5f55 | \u6765\u6e90: ' + source + '</div>';
+      h += '<table class="tbl"><thead><tr><th>\u65e5\u671f</th><th>\u4e0a\u8bc1%</th><th>\u6df1\u8bc1%</th><th>\u521b\u4e1a\u677f%</th><th>\u6210\u4ea4\u989d</th><th>\u6da8\u505c</th><th>\u8dcc\u505c</th><th>\u70b8\u677f\u7387</th><th>\u5317\u5411</th></tr></thead><tbody>';
+      for (var i = 0; i < Math.min(data.length, 60); i++) {
+        var r = data[i]; var date = (r.snapshot_time || '').substring(0, 10);
+        h += '<tr><td>' + date + '</td>';
+        h += '<td style="color:' + ((r.sh_change||0) >= 0 ? '#00d4aa' : '#ff4d6a') + '">' + r.sh_change + '%</td>';
+        h += '<td style="color:' + ((r.sz_change||0) >= 0 ? '#00d4aa' : '#ff4d6a') + '">' + r.sz_change + '%</td>';
+        h += '<td style="color:' + ((r.cyb_change||0) >= 0 ? '#00d4aa' : '#ff4d6a') + '">' + r.cyb_change + '%</td>';
+        h += '<td>' + (r.turnover_total ? (r.turnover_total/1).toFixed(0) + '\u4ebf' : '-') + '</td>';
+        h += '<td style="color:#00d4aa">' + r.limit_up_count + '</td><td style="color:#ff4d6a">' + r.limit_down_count + '</td>';
+        h += '<td>' + r.bomb_rate + '%</td><td>' + (r.northbound_net || '-') + '</td></tr>';
+      }
+      h += '</tbody></table>'; content.innerHTML = h; if (chartWrap) chartWrap.style.display = 'none';
+    } else if (tab === 'sectors') {
+      var h = '<div class="text-sm text-muted mb8">\u5171 ' + data.length + ' \u6761\u8bb0\u5f55 | \u6765\u6e90: ' + source + '</div>';
+      h += '<table class="tbl"><thead><tr><th>\u6392\u540d</th><th>\u677f\u5757</th><th>\u6da8\u8dcc%</th><th>\u51c0\u6d41\u5165</th><th>\u80a1\u7968\u6570</th></tr></thead><tbody>';
+      for (var i = 0; i < Math.min(data.length, 50); i++) {
+        var r = data[i];
+        h += '<tr><td>' + (r.ranking || i+1) + '</td><td>' + (r.sector_name || '-') + '</td>';
+        h += '<td style="color:' + ((r.change_pct||0) >= 0 ? '#00d4aa' : '#ff4d6a') + '">' + r.change_pct + '%</td>';
+        h += '<td>' + (r.net_amount || '-') + '</td><td>' + (r.stock_count || '-') + '</td></tr>';
+      }
+      h += '</tbody></table>'; content.innerHTML = h; if (chartWrap) chartWrap.style.display = 'none';
+    }
+  },
+
+  renderHistoryFactorChart: function(data) {
+    var chartDom = document.getElementById('historyChartInner');
+    if (!chartDom || !data || data.length === 0) return;
+    if (S.charts.historyFactor) S.charts.historyFactor.dispose();
+    var chart = echarts.init(chartDom); S.charts.historyFactor = chart;
+    var times = data.map(function(d){ var ts = d.recorded_at || d.ts || ''; return ts.length > 16 ? ts.substring(11, 19) : ts; });
+    var composites = data.map(function(d){ return d.composite || 0; });
+    chart.setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: 50, right: 50, top: 20, bottom: 30 },
+      xAxis: { type: 'category', data: times, axisLabel: { color: '#5a6599', fontSize: 10, interval: Math.max(1, Math.floor(times.length/10)) } },
+      yAxis: { type: 'value', min: 0, max: 100, axisLabel: { color: '#5a6599' }, splitLine: { lineStyle: { color: '#1a2358' } } },
+      series: [{
+        name: '\u7efc\u5408\u8bc4\u5206', type: 'line', data: composites,
+        lineStyle: { color: '#4f8cff', width: 2 },
+        areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0,color:'rgba(79,140,255,0.3)'},{offset:1,color:'rgba(79,140,255,0.02)'}]) },
+        symbol: 'none', smooth: true
+      }]
+    });
   },
 };
 

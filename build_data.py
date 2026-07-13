@@ -168,3 +168,56 @@ try:
 except Exception as e: print(f"  error: {e}")
 
 print(f"[build] Done at {_time.strftime('%H:%M:%S')}")
+
+# ---- 7-10. Static history data from Supabase (for GitHub Pages) ----
+try:
+    import supabase_service
+except ImportError:
+    supabase_service = None
+
+if supabase_service:
+    supabase_service.init_supabase()
+    if supabase_service.is_available():
+        # 7. history_factors.json
+        print("[build] history_factors.json (from Supabase)...")
+        try:
+            hf = supabase_service.query_factor_history(limit=500)
+            with open(os.path.join(DATA_DIR, "history_factors.json"), "w", encoding="utf-8") as f:
+                json.dump({"success": True, "data": hf, "source": "supabase"}, f, ensure_ascii=False)
+            print(f"  {len(hf)} records")
+        except Exception as e:
+            print(f"  error: {e}")
+
+        # 8. history_volume.json
+        print("[build] history_volume.json (from Supabase)...")
+        try:
+            hv = supabase_service.query_volume_alerts(limit=200)
+            with open(os.path.join(DATA_DIR, "history_volume.json"), "w", encoding="utf-8") as f:
+                json.dump({"success": True, "data": hv, "source": "supabase"}, f, ensure_ascii=False)
+            print(f"  {len(hv)} records")
+        except Exception as e:
+            print(f"  error: {e}")
+
+        # 9. history_snapshots.json
+        print("[build] history_snapshots.json (from Supabase)...")
+        try:
+            hs = supabase_service.query_market_snapshots(days=30, limit=200)
+            with open(os.path.join(DATA_DIR, "history_snapshots.json"), "w", encoding="utf-8") as f:
+                json.dump({"success": True, "data": hs, "source": "supabase"}, f, ensure_ascii=False)
+            print(f"  {len(hs)} records")
+        except Exception as e:
+            print(f"  error: {e}")
+
+        # 10. history_sectors.json
+        print("[build] history_sectors.json (from Supabase)...")
+        try:
+            hse = supabase_service.query_sector_rankings(limit=100)
+            with open(os.path.join(DATA_DIR, "history_sectors.json"), "w", encoding="utf-8") as f:
+                json.dump({"success": True, "data": hse, "source": "supabase"}, f, ensure_ascii=False)
+            print(f"  {len(hse)} records")
+        except Exception as e:
+            print(f"  error: {e}")
+    else:
+        print("[build] Supabase not available, skipping history data")
+else:
+    print("[build] supabase_service not imported, skipping history data")

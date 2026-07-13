@@ -2,6 +2,10 @@
 """dataservice.py - 实时数据获取层"""
 import json, time, threading, urllib.request, ssl, os, re, random
 from datetime import datetime
+try:
+    import supabase_service
+except ImportError:
+    supabase_service = None
 
 CACHE_TTL = {
     "market": 15, "sentiment": 30, "sector": 30, "northbound": 60,
@@ -1573,6 +1577,18 @@ def unified_refresh():
     except:
         pass
     elapsed = _stime.time() - cycle_start
+    # === Supabase sync: factor scores (every cycle) ===
+    if supabase_service and supabase_service.is_available():
+        try:
+            fct = (cache.get("factors_score") or {}).get("data") or {}
+            if fct and fct.get("composite"):
+                supabase_service.sync_factor_scores(
+                    fct.get("composite", 50),
+                    fct.get("factors", []),
+                    fct.get("outlook", "neutral")
+                )
+        except:
+            pass
     return elapsed
 
 
@@ -1801,6 +1817,20 @@ def _try_save_snapshot():
         if is_valid:
             save_snapshot(snapshot)
             print("[snapshot] auto-saved at " + now.strftime("%H:%M:%S"))
+            # === Supabase batch sync (every ~5 min) ===
+            if supabase_service and supabase_service.is_available():
+                try:
+                    mo = snapshot.get('market_overview', {})
+                    if mo:
+                        supabase_service.sync_market_snapshot(mo)
+                    vm_list = snapshot.get('volume_monitor_list', [])
+                    if vm_list:
+                        supabase_service.sync_volume_alerts(vm_list)
+                    sec_list = snapshot.get('sectors', [])
+                    if sec_list:
+                        supabase_service.sync_sector_rankings(sec_list)
+                except Exception as e2:
+                    print("[supabase] batch sync error: " + str(e2))
         else:
             print("[snapshot] skipped (invalid data)")
     except Exception as e:
@@ -1831,6 +1861,9 @@ def _create_seed_snapshot():
     print("[snapshot] seed snapshot created")
 
 def start():
+    # === Supabase init (optional, non-blocking) ===
+    if supabase_service:
+        supabase_service.init_supabase()
     # Always try to load latest snapshot into cache for fallback
     snap = load_latest_snapshot()
     if snap:

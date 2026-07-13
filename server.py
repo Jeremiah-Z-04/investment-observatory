@@ -1,5 +1,9 @@
 import http.server, os, json, time, urllib.request, ssl
 import dataservice, factors_engine, datetime, review_rules
+try:
+    import supabase_service
+except ImportError:
+    supabase_service = None
 
 PORT = 8765
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -501,6 +505,54 @@ class H(http.server.BaseHTTPRequestHandler):
                 else:
                     result = factors_engine.calc_all_factors(lambda k: (dataservice.cache.get(k) or {}).get("data"))
                     self.js({"success":True,"code":code,"ts":ts,"composite":result.get("composite",50),"outlook":result.get("outlook","neutral"),"factors":result.get("factors",[])})
+
+            elif p == "/api/supabase/status":
+                available = supabase_service and supabase_service.is_available()
+                self.js({"success":True,"available":available,"ts":ts})
+
+            elif p == "/api/history/factors":
+                import urllib.parse as up_hf
+                qs = up_hf.parse_qs(self.path.split("?")[1] if "?" in self.path else "")
+                df = (qs.get("from") or [None])[0]
+                dt = (qs.get("to") or [None])[0]
+                if supabase_service and supabase_service.is_available():
+                    data = supabase_service.query_factor_history(df, dt)
+                    self.js({"success":True,"data":data,"source":"supabase","ts":ts})
+                else:
+                    data = history.get_trend() if 'history' in dir() else []
+                    self.js({"success":True,"data":data,"source":"memory","ts":ts})
+
+            elif p == "/api/history/volume":
+                import urllib.parse as up_hv
+                qs = up_hv.parse_qs(self.path.split("?")[1] if "?" in self.path else "")
+                date = (qs.get("date") or [None])[0]
+                if supabase_service and supabase_service.is_available():
+                    data = supabase_service.query_volume_alerts(date)
+                    self.js({"success":True,"data":data,"source":"supabase","ts":ts})
+                else:
+                    snap = dataservice.load_latest_snapshot()
+                    vm = (snap or {}).get("volume_monitor_list", [])
+                    self.js({"success":True,"data":vm,"source":"local","ts":ts})
+
+            elif p == "/api/history/snapshots":
+                import urllib.parse as up_hs
+                qs = up_hs.parse_qs(self.path.split("?")[1] if "?" in self.path else "")
+                days = int((qs.get("days") or ["30"])[0])
+                if supabase_service and supabase_service.is_available():
+                    data = supabase_service.query_market_snapshots(days)
+                    self.js({"success":True,"data":data,"source":"supabase","ts":ts})
+                else:
+                    self.js({"success":True,"data":[],"source":"local","ts":ts,"error":"Supabase not configured"})
+
+            elif p == "/api/history/sectors":
+                import urllib.parse as up_hse
+                qs = up_hse.parse_qs(self.path.split("?")[1] if "?" in self.path else "")
+                date = (qs.get("date") or [None])[0]
+                if supabase_service and supabase_service.is_available():
+                    data = supabase_service.query_sector_rankings(date)
+                    self.js({"success":True,"data":data,"source":"supabase","ts":ts})
+                else:
+                    self.js({"success":True,"data":[],"source":"local","ts":ts})
 
             elif p == "/api/review/summary":
                 self._handle_review_summary()

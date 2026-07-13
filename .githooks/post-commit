@@ -1,0 +1,32 @@
+#!/bin/bash
+# ============================================================
+# post-commit hook — 提交后自动记录
+# ============================================================
+# 功能:
+#   1. 更新 .git/COMMIT_LOG.txt (最近提交摘要)
+#   2. 统计文件变更并记录
+# ============================================================
+
+GIT_DIR="$(git rev-parse --git-dir 2>/dev/null)"
+if [ -z "$GIT_DIR" ]; then
+    exit 0
+fi
+
+LOG_FILE="$GIT_DIR/COMMIT_LOG.txt"
+
+# 获取最新提交信息
+LAST_COMMIT=$(git log -1 --format="%h %ai %s" 2>/dev/null)
+CHANGED_FILES=$(git diff-tree --no-commit-id --name-status -r HEAD 2>/dev/null | head -10)
+
+# 追加到日志
+{
+    echo "========================================"
+    echo "提交时间: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "提交哈希: $LAST_COMMIT"
+    echo "变更文件:"
+    echo "$CHANGED_FILES"
+    echo ""
+} >> "$LOG_FILE"
+
+echo "[post-commit] ✅ 已记录到 COMMIT_LOG.txt"
+exit 0

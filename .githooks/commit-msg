@@ -1,0 +1,54 @@
+#!/bin/bash
+# ============================================================
+# commit-msg hook — 提交信息格式校验
+# ============================================================
+# 规则:
+#   - 标题行不超过 72 字符
+#   - 标题行不能为空
+#   - 标题与正文之间必须有空行（如果有正文）
+# ============================================================
+
+COMMIT_MSG=$(cat "$1")
+SUBJECT=$(echo "$COMMIT_MSG" | head -1)
+
+# 跳过 merge commit
+if echo "$SUBJECT" | grep -qE '^Merge (branch|pull request)'; then
+    exit 0
+fi
+
+# 跳过 revert commit
+if echo "$SUBJECT" | grep -qE '^Revert "'; then
+    exit 0
+fi
+
+# 规则1: 标题不为空
+if [ -z "$SUBJECT" ]; then
+    echo "❌ 提交信息不能为空！"
+    echo "   请参考 COMMIT_CONVENTION.md 了解提交规范。"
+    exit 1
+fi
+
+# 规则2: 标题长度 <= 72
+SUBJECT_LEN=${#SUBJECT}
+if [ $SUBJECT_LEN -gt 72 ]; then
+    echo "❌ 提交标题过长 ($SUBJECT_LEN 字符)，请控制在 72 字符以内。"
+    echo "   当前标题: $SUBJECT"
+    exit 1
+fi
+
+# 规则3: 如果存在第二行，必须为空行
+LINE_COUNT=$(echo "$COMMIT_MSG" | wc -l)
+if [ $LINE_COUNT -gt 1 ]; then
+    SECOND_LINE=$(echo "$COMMIT_MSG" | sed -n '2p')
+    if [ -n "$SECOND_LINE" ]; then
+        echo "❌ 提交标题与正文之间必须有一个空行。"
+        echo "   正确格式:"
+        echo "   <标题>"
+        echo "   "
+        echo "   <正文>"
+        exit 1
+    fi
+fi
+
+echo "[commit-msg] ✅ 格式检查通过"
+exit 0

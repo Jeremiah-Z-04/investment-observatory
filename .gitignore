@@ -31,6 +31,14 @@ dataservice_backup.md
 # Old backup
 _old/
 
+# Git auto-generated
+.git/COMMIT_LOG.txt
+
+# IDE / Editor
+*.swp
+*.swo
+.vscode/
+
 # OS
 .DS_Store
 Thumbs.db

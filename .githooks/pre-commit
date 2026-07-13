@@ -1,0 +1,42 @@
+#!/bin/bash
+# ============================================================
+# pre-commit hook — 提交前检查
+# ============================================================
+# 检查项:
+#   1. 禁止提交调试用临时文件 (_*.py, _*.txt)
+#   2. 禁止提交 Python 缓存文件
+#   3. 检查是否有残留的调试代码 (print, console.log)
+# ============================================================
+
+echo "[pre-commit] 开始检查..."
+
+# 1. 检查临时文件
+TEMP_FILES=$(git diff --cached --name-only --diff-filter=A | grep -E '^_(check|fix|final|tmp|test_final|patch|dump|advice)')
+if [ -n "$TEMP_FILES" ]; then
+    echo "❌ 发现调试用临时文件，禁止提交:"
+    echo "$TEMP_FILES"
+    echo ""
+    echo "   请将这些文件移到 _old/ 目录或删除后再提交。"
+    exit 1
+fi
+
+# 2. 检查 .pyc 文件
+PYC_FILES=$(git diff --cached --name-only | grep '\.pyc$')
+if [ -n "$PYC_FILES" ]; then
+    echo "❌ 发现 .pyc 缓存文件，禁止提交"
+    exit 1
+fi
+
+# 3. 检查残留调试代码 (只检查本次修改的 Python 文件)
+CHANGED_PY=$(git diff --cached --name-only | grep '\.py$')
+if [ -n "$CHANGED_PY" ]; then
+    DEBUG_PRINTS=$(git diff --cached -- "$CHANGED_PY" | grep -E '^\+\s*(print\(|<script>console\.log)' | head -5)
+    if [ -n "$DEBUG_PRINTS" ]; then
+        echo "⚠️  发现疑似调试代码 (请确认是否需要):"
+        echo "$DEBUG_PRINTS"
+        echo ""
+    fi
+fi
+
+echo "[pre-commit] ✅ 检查通过"
+exit 0

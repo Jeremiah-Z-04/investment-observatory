@@ -1,0 +1,13 @@
+
+# <type>(<scope>): <subject>
+# 
+# type: feat, fix, refactor, perf, style, docs, chore, data, config, test
+# scope: dashboard, industry, review, volume, scoring, api, data, ui, theme, ci, hooks, docs
+# 
+# subject 不超过50字，使用祈使语气
+# body 描述变更原因和上下文，每行不超过72字
+# 
+# 示例:
+#   feat(scoring): 新增存储芯片赛道 HBM 细分链条打分
+#   fix(api): 修复行情数据请求超时未重试的问题
+#   data(scores): 更新主线赛道打分配置

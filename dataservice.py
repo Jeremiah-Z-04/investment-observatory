@@ -1022,9 +1022,7 @@ def get_market_data(key, default=None):
             if key == "sectors" and isinstance(val, dict) and "list" in val:
                 val = val["list"]
             return val
-        if snap:
-            return default
-        # No snapshot - fall back to cache (if server has been running)
+        # Fall back to in-memory cache regardless of snapshot presence
         ck_name = ck.get(key, key)
         cached = cache.get(ck_name)
         if cached and cached.get("data") is not None:

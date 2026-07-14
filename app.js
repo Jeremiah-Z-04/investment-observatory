@@ -2075,8 +2075,8 @@ var S = {
     }
 
     var timeRange = times.length > 1 ? (times[times.length - 1] - times[0]) : 3600000;
-    var initZoomStart = Math.max(0, 100 - Math.min(100, Math.round(3600000 / timeRange * 100)));
-    var initZoomEnd = 100;
+    var minSpanPct = Math.max(1, Math.round(1800000 / timeRange * 100));
+    var maxSpanPct = Math.min(100, Math.round(86400000 / timeRange * 100));
 
     chart.setOption({
       tooltip: {
@@ -2110,7 +2110,8 @@ var S = {
       dataZoom: [
         {
           type: 'slider', bottom: 20, height: 16,
-          start: initZoomStart, end: initZoomEnd,
+          start: 0, end: 100,
+          minSpan: minSpanPct, maxSpan: maxSpanPct,
           borderColor: 'rgba(255,255,255,.08)',
           backgroundColor: 'rgba(255,255,255,.03)',
           dataBackground: {
@@ -2125,7 +2126,7 @@ var S = {
           textStyle: { color: '#64748B', fontSize: 9 },
           moveHandleSize: 6, handleSize: '80%'
         },
-        { type: 'inside' }
+        { type: 'inside', minSpan: minSpanPct, maxSpan: maxSpanPct }
       ],
       series: [
         {

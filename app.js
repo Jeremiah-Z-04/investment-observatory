@@ -1997,19 +1997,50 @@ var S = {
     if (!chartDom || !data || data.length === 0) return;
     if (S.charts.historyFactor) S.charts.historyFactor.dispose();
     var chart = echarts.init(chartDom); S.charts.historyFactor = chart;
-    var times = data.map(function (d) { var ts = d.recorded_at || d.ts || ''; return ts.length > 16 ? ts.substring(11, 19) : ts; });
-    var composites = data.map(function (d) { return d.composite || 0; });
+
+    var compData = [], sentData = [], sectData = [], chipData = [], overData = [];
+    for (var i = 0; i < data.length; i++) {
+      var d = data[i];
+      var ts = d.recorded_at || d.ts || '';
+      if (typeof ts === 'string' && ts.length > 16) ts = ts.substring(0, 16).replace('T', ' ');
+      var t = new Date(ts);
+      compData.push([t, d.composite || 50]);
+      sentData.push([t, d.sentiment !== undefined ? d.sentiment : 50]);
+      sectData.push([t, d.sector !== undefined ? d.sector : 50]);
+      chipData.push([t, d.chip !== undefined ? d.chip : 50]);
+      overData.push([t, d.overnight !== undefined ? d.overnight : 50]);
+    }
+
     chart.setOption({
-      tooltip: { trigger: 'axis', backgroundColor: 'rgba(17,24,39,.95)', borderColor: 'rgba(255,255,255,.1)', textStyle: { color: '#E2E8F0' } },
-      grid: { left: 50, right: 50, top: 20, bottom: 30 },
-      xAxis: { type: 'category', data: times, axisLabel: { color: '#64748B', fontSize: 10, interval: Math.max(1, Math.floor(times.length / 10)) }, axisLine: { lineStyle: { color: 'rgba(255,255,255,.1)' } } },
-      yAxis: { type: 'value', min: 0, max: 100, axisLabel: { color: '#64748B' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,.06)' } } },
-      series: [{
-        name: '综合评分', type: 'line', data: composites,
-        lineStyle: { color: '#4F7DF3', width: 2 },
-        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(79,125,243,0.3)' }, { offset: 1, color: 'rgba(79,125,243,0.02)' }]) },
-        symbol: 'none', smooth: true
-      }]
+      tooltip: { trigger: 'axis', backgroundColor: 'rgba(17,24,39,.95)', borderColor: 'rgba(255,255,255,.1)', textStyle: { color: '#E2E8F0', fontSize: 11 } },
+      legend: {
+        data: ['综合评分', '情绪', '板块', '筹码', '隔夜'],
+        bottom: 0, textStyle: { color: '#94A3B8', fontSize: 10 },
+        itemWidth: 12, itemHeight: 8,
+        selected: { '情绪': false, '板块': false, '筹码': false, '隔夜': false }
+      },
+      grid: { left: 50, right: 20, top: 15, bottom: 40 },
+      xAxis: {
+        type: 'time', axisLabel: { color: '#64748B', fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(255,255,255,.1)' } },
+        splitLine: { show: false }
+      },
+      yAxis: { type: 'value', min: 0, max: 100, axisLabel: { color: '#64748B', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(255,255,255,.06)' } } },
+      dataZoom: [
+        { type: 'slider', bottom: 20, height: 16, start: 0, end: 100,
+          borderColor: 'rgba(255,255,255,.08)', backgroundColor: 'rgba(255,255,255,.03)',
+          dataBackground: { lineStyle: { color: 'rgba(79,125,243,.3)' }, areaStyle: { color: 'rgba(79,125,243,.08)' } },
+          selectedDataBackground: { lineStyle: { color: '#4F7DF3' }, areaStyle: { color: 'rgba(79,125,243,.15)' } },
+          handleStyle: { color: '#4F7DF3' }, textStyle: { color: '#64748B', fontSize: 9 }
+        },
+        { type: 'inside' }
+      ],
+      series: [
+        { name: '综合评分', type: 'line', data: compData, lineStyle: { color: '#4F7DF3', width: 2.5 }, areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(79,125,243,.25)'},{offset:1,color:'rgba(79,125,243,.02)'}])}, symbol: 'none', smooth: true },
+        { name: '情绪', type: 'line', data: sentData, lineStyle: { color: '#F59E0B', width: 1.5, type: 'dashed' }, symbol: 'none', smooth: true },
+        { name: '板块', type: 'line', data: sectData, lineStyle: { color: '#10B981', width: 1.5, type: 'dashed' }, symbol: 'none', smooth: true },
+        { name: '筹码', type: 'line', data: chipData, lineStyle: { color: '#EF4444', width: 1.5, type: 'dashed' }, symbol: 'none', smooth: true },
+        { name: '隔夜', type: 'line', data: overData, lineStyle: { color: '#8B5CF6', width: 1.5, type: 'dashed' }, symbol: 'none', smooth: true }
+      ]
     });
   },
 
@@ -2023,28 +2054,104 @@ var S = {
       chart.clear();
       chart.setOption({
         title: { text: '等待数据...', textStyle: { color: '#64748B', fontSize: 13 }, left: 'center', top: 'center' },
-        grid: { top: 20, bottom: 20, left: 40, right: 20 },
         backgroundColor: 'transparent'
       });
       return;
     }
-    var times = [], vals = [];
+
+    var times = [], compVals = [], sentVals = [], sectVals = [], chipVals = [], overVals = [];
     for (var i = 0; i < dps.length; i++) {
-      var d = dps[i].ts ? new Date(dps[i].ts) : null;
-      times.push(d ? (d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0')) : '--');
-      vals.push(dps[i].composite !== undefined ? dps[i].composite : 0);
+      var d = dps[i];
+      var ts = d.recorded_at ? new Date(d.recorded_at) : (d.ts ? new Date(d.ts) : new Date());
+      times.push(ts);
+      var f = d.factors || [];
+      var factorsMap = {};
+      for (var j = 0; j < f.length; j++) { factorsMap[f[j].id] = f[j].score; }
+      compVals.push([ts, d.composite !== undefined ? d.composite : 50]);
+      sentVals.push([ts, factorsMap.sentiment !== undefined ? factorsMap.sentiment : (d.sentiment || 50)]);
+      sectVals.push([ts, factorsMap.sector !== undefined ? factorsMap.sector : (d.sector || 50)]);
+      chipVals.push([ts, factorsMap.chip !== undefined ? factorsMap.chip : (d.chip || 50)]);
+      overVals.push([ts, factorsMap.overnight !== undefined ? factorsMap.overnight : (d.overnight || 50)]);
     }
+
+    var timeRange = times.length > 1 ? (times[times.length - 1] - times[0]) : 3600000;
+    var initZoomStart = Math.max(0, 100 - Math.min(100, Math.round(3600000 / timeRange * 100)));
+    var initZoomEnd = 100;
+
     chart.setOption({
-      tooltip: { trigger: 'axis', backgroundColor: 'rgba(17,24,39,.95)', borderColor: 'rgba(255,255,255,.1)', textStyle: { color: '#E2E8F0', fontSize: 11 } },
-      grid: { top: 20, bottom: 20, left: 40, right: 16 },
-      xAxis: { type: 'category', data: times, axisLine: { lineStyle: { color: 'rgba(255,255,255,.1)' } }, axisLabel: { color: '#64748B', fontSize: 10 } },
-      yAxis: { type: 'value', min: 0, max: 100, splitLine: { lineStyle: { color: 'rgba(255,255,255,.06)' } }, axisLabel: { color: '#64748B', fontSize: 10 } },
-      series: [{
-        type: 'line', data: vals, smooth: true,
-        lineStyle: { color: '#4F7DF3', width: 2 },
-        areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(79,125,243,.3)' }, { offset: 1, color: 'rgba(79,125,243,.02)' }] } },
-        symbol: 'circle', symbolSize: 4, itemStyle: { color: '#4F7DF3' }
-      }],
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: 'rgba(17,24,39,.95)',
+        borderColor: 'rgba(255,255,255,.1)',
+        textStyle: { color: '#E2E8F0', fontSize: 11 }
+      },
+      legend: {
+        data: ['综合', '情绪', '板块', '筹码', '隔夜'],
+        bottom: 0,
+        textStyle: { color: '#94A3B8', fontSize: 10 },
+        itemWidth: 12, itemHeight: 8,
+        selected: { '情绪': false, '板块': false, '筹码': false, '隔夜': false }
+      },
+      grid: { top: 10, bottom: 40, left: 45, right: 20 },
+      xAxis: {
+        type: 'time',
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,.1)' } },
+        axisLabel: { color: '#64748B', fontSize: 10, formatter: function (v) {
+          var d = new Date(v);
+          return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+        }},
+        splitLine: { show: false }
+      },
+      yAxis: {
+        type: 'value', min: 0, max: 100,
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,.06)' } },
+        axisLabel: { color: '#64748B', fontSize: 10 }
+      },
+      dataZoom: [
+        {
+          type: 'slider', bottom: 20, height: 16,
+          start: initZoomStart, end: initZoomEnd,
+          borderColor: 'rgba(255,255,255,.08)',
+          backgroundColor: 'rgba(255,255,255,.03)',
+          dataBackground: {
+            lineStyle: { color: 'rgba(79,125,243,.3)', width: 1 },
+            areaStyle: { color: 'rgba(79,125,243,.08)' }
+          },
+          selectedDataBackground: {
+            lineStyle: { color: '#4F7DF3', width: 1.5 },
+            areaStyle: { color: 'rgba(79,125,243,.15)' }
+          },
+          handleStyle: { color: '#4F7DF3', borderColor: '#4F7DF3' },
+          textStyle: { color: '#64748B', fontSize: 9 },
+          moveHandleSize: 6, handleSize: '80%'
+        },
+        { type: 'inside' }
+      ],
+      series: [
+        {
+          name: '综合', type: 'line', data: compVals, smooth: true,
+          lineStyle: { color: '#4F7DF3', width: 2.5 },
+          areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [{ offset: 0, color: 'rgba(79,125,243,.25)' }, { offset: 1, color: 'rgba(79,125,243,.02)' }] } },
+          symbol: 'none'
+        },
+        {
+          name: '情绪', type: 'line', data: sentVals, smooth: true,
+          lineStyle: { color: '#F59E0B', width: 1.5, type: 'dashed' }, symbol: 'none'
+        },
+        {
+          name: '板块', type: 'line', data: sectVals, smooth: true,
+          lineStyle: { color: '#10B981', width: 1.5, type: 'dashed' }, symbol: 'none'
+        },
+        {
+          name: '筹码', type: 'line', data: chipVals, smooth: true,
+          lineStyle: { color: '#EF4444', width: 1.5, type: 'dashed' }, symbol: 'none'
+        },
+        {
+          name: '隔夜', type: 'line', data: overVals, smooth: true,
+          lineStyle: { color: '#8B5CF6', width: 1.5, type: 'dashed' }, symbol: 'none'
+        }
+      ],
       backgroundColor: 'transparent'
     });
     S.charts.sentiment = chart;

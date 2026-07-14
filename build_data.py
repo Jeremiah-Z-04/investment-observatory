@@ -43,12 +43,14 @@ try:
     import factors_engine
     _ldd = dataservice.get_market_data("limit_stats") or {}
     _idx = dataservice.get_market_data("market_indices") or {}
+    _nb = dataservice.get_market_data("northbound") or {}
     market = {
         "limit_up_count": int((_ldd or {}).get("limit_up_count", 0) or 0),
         "limit_down_count": int((_ldd or {}).get("limit_down_count", 0) or 0),
         "bomb_rate": round(float((_ldd or {}).get("bomb_rate", 0.0) or 0.0), 1),
         "turnover_total": round(float((_idx or {}).get("trackedVolume", 0) or 0), 1),
-        "northbound_net": 0.0, "max_board_height": 0
+        "northbound_net": round(float((_nb or {}).get("data", 0) or 0), 1),
+        "max_board_height": int((_ldd or {}).get("max_board_height", 0) or 0)
     }
     def _co(key):
         if key == "limit_up_down":
@@ -206,8 +208,10 @@ if supabase_service:
                     "sh_change": 0.0, "sz_change": 0.0, "cyb_change": 0.0,
                     "turnover_total": ty2, "up_count": rise2, "down_count": fall2,
                     "limit_up_count": luc2, "limit_down_count": ldc2,
-                    "bomb_rate": 0.0, "northbound_net": 0.0,
-                    "composite_score": composite, "max_board_height": 0
+                    "bomb_rate": round(float((_ldd or {}).get("bomb_rate", 0) or 0), 1),
+                    "northbound_net": round(float((_nb or {}).get("data", 0) or 0), 1),
+                    "composite_score": composite,
+                    "max_board_height": int((_ldd or {}).get("max_board_height", 0) or 0)
                 }
                 supabase_service.sync_market_snapshot(snapshot)
                 print("  market snapshot synced")

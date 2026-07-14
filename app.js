@@ -480,20 +480,26 @@ var S = {
     S.checkSupabaseStatus();
 
     if (S.staticMode) {
-      S.setStatus('离线版', '#64748B');
+      if (S.supabaseAvailable) {
+        S.setStatus('云端在线', '#22C55E');
+        S.online = true;
+      } else {
+        S.setStatus('云端数据', '#378ADD');
+      }
+      S._pollMarketData();
       setTimeout(function () { S.refresh(); }, 100);
     } else {
       fetch(S.server + '/api/ping').then(function (r) { return r.json(); }).then(function (d) {
         if (d.status === 'ok') {
           S.online = true;
-          S.setStatus('在线', '#22C55E');
+          S.setStatus('服务器在线', '#22C55E');
           S.lastTs = d.time;
           var ts = document.getElementById('ts');
           if (ts) ts.textContent = d.time;
           S.refresh();
         }
       }).catch(function () {
-        S.setStatus('离线', '#FF4D4F');
+        S.setStatus('服务器离线', '#FF4D4F');
         S.refresh();
       });
     }
@@ -503,14 +509,17 @@ var S = {
         fetch(S.server + '/api/ping').then(function (r) { return r.json(); }).then(function (d) {
           if (d.status === 'ok') {
             S.online = true;
-            S.setStatus('在线', '#22C55E');
+            S.setStatus('服务器在线', '#22C55E');
             var ts = document.getElementById('ts');
             if (ts) ts.textContent = d.time;
           }
         }).catch(function () {
           S.online = false;
-          S.setStatus('离线', '#FF4D4F');
+          S.setStatus('服务器离线', '#FF4D4F');
         });
+      } else if (S.supabaseAvailable) {
+        S.setStatus('云端在线', '#22C55E');
+        S._pollMarketData();
       }
       S.checkSupabaseStatus();
     }, 30000);
@@ -528,6 +537,69 @@ var S = {
       if (clr === '#22C55E') icon.classList.add('online');
       else if (clr === '#FF4D4F') icon.classList.add('offline');
       else icon.classList.add('idle');
+    }
+  },
+
+  _marketDataCache: null,
+  _lastMarketFetch: 0,
+
+  _pollMarketData: function () {
+    var now = Date.now();
+    if (now - S._lastMarketFetch < 60000) return;
+    S._lastMarketFetch = now;
+    var tsEl = document.getElementById('ts');
+    var nowStr = new Date().toTimeString().substring(0, 8);
+    try {
+      var script = document.createElement('script');
+      var callbackName = '_sinaCb' + now;
+      window[callbackName] = function (data) {
+        try {
+          var indices = [];
+          var names = { sh000001: '上证指数', sz399001: '深证成指', sz399006: '创业板指' };
+          for (var i = 0; i < data.length; i++) {
+            var parts = data[i].split(',');
+            if (parts.length > 3) {
+              indices.push({
+                name: names[parts[0]] || parts[0],
+                price: parseFloat(parts[3]),
+                change: parseFloat(parts[3]) - parseFloat(parts[2]),
+                changePct: ((parseFloat(parts[3]) - parseFloat(parts[2])) / parseFloat(parts[2]) * 100).toFixed(2)
+              });
+            }
+          }
+          S._marketDataCache = { indices: indices, ts: nowStr };
+          if (tsEl) tsEl.textContent = nowStr;
+          S._updateMarketDisplay();
+        } catch (e) {
+          if (tsEl) tsEl.textContent = nowStr;
+        }
+        delete window[callbackName];
+      };
+      script.src = 'https://hq.sinajs.cn/list=sh000001,sz399001,sz399006&_=' + now;
+      script.onerror = function () {
+        if (tsEl) tsEl.textContent = nowStr;
+        delete window[callbackName];
+      };
+      document.head.appendChild(script);
+      setTimeout(function () { if (script.parentNode) script.parentNode.removeChild(script); }, 2000);
+    } catch (e) {
+      if (tsEl) tsEl.textContent = nowStr;
+    }
+  },
+
+  _updateMarketDisplay: function () {
+    if (!S._marketDataCache || !S._marketDataCache.indices) return;
+    var indices = S._marketDataCache.indices;
+    var sourceLabel = document.getElementById('dataSourceLabel');
+    if (sourceLabel) {
+      var tag = indices.length > 0 ? '实时指数' : '云端缓存';
+      var cls = indices.length > 0 ? 'tag tag-green' : 'tag tag-blue';
+      sourceLabel.className = cls;
+      sourceLabel.innerHTML = '<span class="tag-dot"></span>' + tag;
+    }
+    var homeTs = document.getElementById('homeTs');
+    if (homeTs && S._marketDataCache) {
+      homeTs.textContent = '更新: ' + S._marketDataCache.ts;
     }
   },
 
@@ -1731,7 +1803,8 @@ var S = {
       var icon = document.getElementById('dbIcon');
       var dbStatus = document.getElementById('dbStatus');
       if (icon) icon.className = 'status-dot online';
-      if (dbStatus) dbStatus.textContent = 'DB 在线 (浏览器直连)';
+      if (dbStatus) dbStatus.textContent = '数据库在线';
+      if (S.staticMode) S.setStatus('云端在线', '#22C55E');
       return;
     }
     if (S.staticMode) return;
@@ -1743,24 +1816,24 @@ var S = {
       if (!icon || !dbStatus) return;
       if (d.connected) {
         icon.className = 'status-dot online';
-        var txt = 'DB 在线';
+        var txt = '数据库在线';
         if (d.last_sync) txt += ' · ' + d.last_sync;
         if (d.total_synced) txt += ' · ' + d.total_synced + '次';
         dbStatus.textContent = txt;
       } else if (d.configured) {
         icon.className = 'status-dot idle';
-        dbStatus.textContent = 'DB 断开 (' + (d.consecutive_errors || 0) + '次失败)';
+        dbStatus.textContent = '数据库断开 (' + (d.consecutive_errors || 0) + '次失败)';
         S.supabaseAvailable = false;
       } else {
         icon.className = 'status-dot idle';
-        dbStatus.textContent = 'DB 未配置';
+        dbStatus.textContent = '数据库未配置';
         S.supabaseAvailable = false;
       }
     }).catch(function () {
       var icon = document.getElementById('dbIcon');
       var dbStatus = document.getElementById('dbStatus');
       if (icon) icon.className = 'status-dot offline';
-      if (dbStatus) dbStatus.textContent = 'DB 无响应';
+      if (dbStatus) dbStatus.textContent = '数据库无响应';
       S.supabaseAvailable = false;
     });
   },
@@ -1809,7 +1882,7 @@ var S = {
     else if (tab === 'sectors') { apiPath = 'history/sectors'; if (to) params += '&date=' + to; }
     var url = S.apiUrl(apiPath) + (params ? '?' + params.substring(1) : '');
     fetch(url).then(function (r) { return r.json(); }).then(function (d) {
-      if (d.success && d.data) { S.renderHistoryContent(tab, d.data, d.source || 'unknown'); }
+      if (d.success && d.data) { S.renderHistoryContent(tab, d.data, d.source || '本地缓存'); }
       else { content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">暂无数据</div>'; if (chartWrap) chartWrap.classList.add('hidden'); }
     }).catch(function (e) {
       content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--up)">加载失败: ' + UI.escape(e.message) + '</div>';
@@ -1833,7 +1906,7 @@ var S = {
       query = supabaseClient.from('sector_rankings').select('*').order('ranking', { ascending: true }).limit(100);
       if (to) query = query.eq('date', to);
     } else {
-      content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">未知数据源</div>';
+      content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">不支持的数据类型</div>';
       return;
     }
     query.then(function (result) {
@@ -1842,14 +1915,14 @@ var S = {
       if (data.length > 0) {
         S.renderHistoryContent(tab, data, 'Supabase');
       } else {
-        content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">暂无数据 (Supabase)</div>';
+        content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">暂无数据，请先等待数据采集（每5分钟一次）</div>';
         if (chartWrap) chartWrap.classList.add('hidden');
       }
     }).catch(function (err) {
-      console.error('Supabase query error:', err);
+      console.error('Supabase 查询失败:', err);
       S.supabaseAvailable = false;
       var dbStatus = document.getElementById('dbStatus');
-      if (dbStatus) dbStatus.textContent = 'DB 查询失败';
+      if (dbStatus) dbStatus.textContent = '数据库查询失败，回退本地数据';
       S.loadHistoryData();
     });
   },

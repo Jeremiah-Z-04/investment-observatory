@@ -11,6 +11,11 @@ print("[build] Starting...")
 import dataservice
 import utils
 
+try:
+    import supabase_service
+except ImportError:
+    supabase_service = None
+
 # Quick fetch: just call unified_refresh once
 try:
     elapsed = dataservice.unified_refresh()
@@ -162,6 +167,81 @@ try:
     with open(os.path.join(DATA_DIR, "stock_search.json"), "w", encoding="utf-8") as f: json.dump({"success": True, "list": codes}, f, ensure_ascii=False)
     print(f"  {len(codes)} stocks")
 except Exception as e: print(f"  error: {e}")
+
+# ---- Supabase Write: push real-time data to DB ----
+if supabase_service:
+    print("[build] Supabase write...")
+    supabase_service.init_supabase()
+    if supabase_service.is_available():
+        # 1. Factor scores
+        try:
+            factors_list = result.get("factors", [])
+            composite = result.get("composite", 50)
+            outlook = result.get("outlook", "neutral")
+            supabase_service.sync_factor_scores(composite, factors_list, outlook)
+            print("  factors synced (composite={})".format(composite))
+        except Exception as e:
+            print("  factors sync error: {}".format(e))
+
+        # 2. Volume alerts
+        try:
+            vol_list = tl if tl else yl
+            if vol_list:
+                supabase_service.sync_volume_alerts(vol_list)
+                print("  volume alerts synced ({} entries)".format(len(vol_list)))
+        except Exception as e:
+            print("  volume sync error: {}".format(e))
+
+        # 3. Market snapshot
+        try:
+            sdata2 = _get_stocks()
+            if sdata2:
+                luc2 = sum(1 for s in sdata2 if float(s.get("change",0) or 0) >= 9.5)
+                ldc2 = sum(1 for s in sdata2 if float(s.get("change",0) or 0) <= -9.5)
+                rise2 = sum(1 for s in sdata2 if float(s.get("change",0) or 0) > 0)
+                fall2 = sum(1 for s in sdata2 if float(s.get("change",0) or 0) < 0)
+                ta2 = sum(float(s.get("amount",0) or 0) for s in sdata2)
+                ty2 = round(ta2 / 1e8, 1) if ta2 else 0
+                snapshot = {
+                    "sh_change": 0.0, "sz_change": 0.0, "cyb_change": 0.0,
+                    "turnover_total": ty2, "up_count": rise2, "down_count": fall2,
+                    "limit_up_count": luc2, "limit_down_count": ldc2,
+                    "bomb_rate": 0.0, "northbound_net": 0.0,
+                    "composite_score": composite, "max_board_height": 0
+                }
+                supabase_service.sync_market_snapshot(snapshot)
+                print("  market snapshot synced")
+        except Exception as e:
+            print("  snapshot sync error: {}".format(e))
+
+        # 4. Sector rankings
+        try:
+            sdata3 = _get_stocks()
+            if sdata3:
+                sm2 = {}
+                for s in sdata3:
+                    sec = s.get("sector","") or ""
+                    if sec:
+                        if sec not in sm2:
+                            sm2[sec] = {"count": 0, "total_change": 0.0}
+                        sm2[sec]["count"] += 1
+                        sm2[sec]["total_change"] += float(s.get("change",0) or 0)
+                rankings = []
+                for sn, sd in sorted(sm2.items(), key=lambda x: -x[1]["count"])[:50]:
+                    rankings.append({
+                        "name": sn, "code": "",
+                        "change": round(sd["total_change"] / max(sd["count"], 1), 2),
+                        "count": sd["count"], "net_amount": 0
+                    })
+                if rankings:
+                    supabase_service.sync_sector_rankings(rankings)
+                    print("  sector rankings synced ({} sectors)".format(len(rankings)))
+        except Exception as e:
+            print("  sector sync error: {}".format(e))
+    else:
+        print("[build] Supabase not available for write")
+else:
+    print("[build] supabase_service not imported, skip write")
 
 print(f"[build] Done at {_time.strftime('%H:%M:%S')}")
 

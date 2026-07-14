@@ -3,6 +3,21 @@
    Apple iOS 级动效 · anime.js 驱动
    ============================================================ */
 
+// ===== Supabase Client (browser-side direct connection) =====
+var supabaseClient = null;
+(function () {
+  if (typeof supabase !== 'undefined' && supabase.createClient) {
+    try {
+      supabaseClient = supabase.createClient(
+        'https://clmfuugvprbrxdycczta.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsbWZ1dWd2cHJicnhkeWNjenRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NTIwNTAsImV4cCI6MjA5OTUyODA1MH0.iVMayRd41Gv6N4j9qa8m4OxhOI-vVg36_wYNKONGKac'
+      );
+    } catch (e) {
+      console.warn('Supabase client init failed:', e);
+    }
+  }
+})();
+
 // ===== Translations =====
 var T = {
   'nav.home': { zh: '四因子看板', en: 'Dashboard' },
@@ -1711,6 +1726,14 @@ var S = {
   },
 
   checkSupabaseStatus: function () {
+    if (supabaseClient) {
+      S.supabaseAvailable = true;
+      var icon = document.getElementById('dbIcon');
+      var dbStatus = document.getElementById('dbStatus');
+      if (icon) icon.className = 'status-dot online';
+      if (dbStatus) dbStatus.textContent = 'DB 在线 (浏览器直连)';
+      return;
+    }
     if (S.staticMode) return;
     fetch(S.server + '/api/supabase/status').then(function (r) { return r.json(); }).then(function (d) {
       if (!d.success) return;
@@ -1773,6 +1796,12 @@ var S = {
     if (!content) return;
     content.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-tertiary)">加载中...</div>';
     var tab = S.currentHistoryTab;
+
+    if (supabaseClient) {
+      S._loadHistoryFromSupabase(tab, from, to);
+      return;
+    }
+
     var apiPath = ''; var params = '';
     if (tab === 'factors') { apiPath = 'history/factors'; if (from) params += '&from=' + from; if (to) params += '&to=' + to; }
     else if (tab === 'volume') { apiPath = 'history/volume'; if (to) params += '&date=' + to; }
@@ -1784,6 +1813,44 @@ var S = {
       else { content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">暂无数据</div>'; if (chartWrap) chartWrap.classList.add('hidden'); }
     }).catch(function (e) {
       content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--up)">加载失败: ' + UI.escape(e.message) + '</div>';
+    });
+  },
+
+  _loadHistoryFromSupabase: function (tab, from, to) {
+    var content = document.getElementById('historyContent');
+    var chartWrap = document.getElementById('historyChart');
+    var query;
+    if (tab === 'factors') {
+      query = supabaseClient.from('factor_scores').select('*').order('recorded_at', { ascending: true }).limit(500);
+      if (from) query = query.gte('recorded_at', from + 'T00:00:00');
+      if (to) query = query.lte('date', to);
+    } else if (tab === 'volume') {
+      query = supabaseClient.from('volume_alerts').select('*').order('ratio', { ascending: false }).limit(200);
+      if (to) query = query.eq('date', to);
+    } else if (tab === 'snapshots') {
+      query = supabaseClient.from('market_snapshots').select('*').order('snapshot_time', { ascending: false }).limit(200);
+    } else if (tab === 'sectors') {
+      query = supabaseClient.from('sector_rankings').select('*').order('ranking', { ascending: true }).limit(100);
+      if (to) query = query.eq('date', to);
+    } else {
+      content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">未知数据源</div>';
+      return;
+    }
+    query.then(function (result) {
+      var data = result.data || [];
+      if (result.error) throw result.error;
+      if (data.length > 0) {
+        S.renderHistoryContent(tab, data, 'Supabase');
+      } else {
+        content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">暂无数据 (Supabase)</div>';
+        if (chartWrap) chartWrap.classList.add('hidden');
+      }
+    }).catch(function (err) {
+      console.error('Supabase query error:', err);
+      S.supabaseAvailable = false;
+      var dbStatus = document.getElementById('dbStatus');
+      if (dbStatus) dbStatus.textContent = 'DB 查询失败';
+      S.loadHistoryData();
     });
   },
 

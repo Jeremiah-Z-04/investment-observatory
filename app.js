@@ -376,6 +376,7 @@ var S = {
     'review/summary': 'data/review_summary.json',
     'review/stocks': 'data/review_stocks.json',
     'stock/search': 'data/stock_search.json',
+    'industry/chain': 'industry_chain_config.json',
     'history/factors': 'data/history_factors.json',
     'history/volume': 'data/history_volume.json',
     'history/snapshots': 'data/history_snapshots.json',
@@ -1177,7 +1178,7 @@ var S = {
         '</div>' +
         '<span class="text-xs text-tertiary">离线预置数据</span>';
     }
-    var h = '<div class="flex gap-4" style="height:calc(100vh - 140px);min-height:500px">';
+    var h = '<div class="flex gap-4" style="height:calc(100dvh - 140px);min-height:500px;overflow:hidden">';
     h += '<div class="card" style="width:200px;min-width:200px;display:flex;flex-direction:column;overflow:hidden">';
     h += '<div class="card-title mb-3">产业赛道</div>';
     h += '<div id="industryList" class="overflow-auto flex-1"></div>';
@@ -1203,50 +1204,114 @@ var S = {
   chainData: {
     name: 'AI算力产业链',
     score: 82,
-    children: [
-      {
-        name: '上游 供给端',
-        children: [
-          { name: '能源电力配套', score: 75, logic: 'AI算力高能耗驱动液冷/UPS需求爆发', barrier: '认证壁垒高, 客户粘性强', stocks: [{ code: '300499', name: '高澜股份' }, { code: '002837', name: '英维克' }, { code: '002851', name: '麦格米特' }] },
-          { name: '半导体核心材料', score: 80, logic: '国产替代加速, HBM/光掩膜需求旺盛', barrier: '技术壁垒极高, 验证周期长', stocks: [{ code: '300666', name: '江丰电子' }, { code: '002371', name: '北方华创' }] },
-          { name: '半导体生产设备', score: 85, logic: '晶圆厂扩产驱动设备需求持续增长', barrier: '光刻机等核心设备高度垄断', stocks: [{ code: '688012', name: '中微公司' }, { code: '002371', name: '北方华创' }, { code: '300604', name: '长川科技' }] },
-          { name: '核心零部件', score: 78, logic: 'AI芯片/800G光模块需求爆发', barrier: '高端芯片设计/制造壁垒', stocks: [{ code: '300308', name: '中际许创' }, { code: '688041', name: '海光信息' }] }
-        ]
-      },
-      {
-        name: '中游 算力制造运营',
-        children: [
-          { name: '硬件制造', score: 82, logic: 'AI服务器/光模块订单饱满, 先进封装产能紧缺', barrier: '量产能力+客户认证', stocks: [{ code: '300308', name: '中际许创' }, { code: '000977', name: '浪潮信息' }, { code: '688256', name: '寒武纪' }] },
-          { name: '算力运营', score: 70, logic: '智算中心建设加速, 算力租赁模式兴起', barrier: '资金壁垒高, 电力资源稀缺', stocks: [{ code: '300442', name: '润泽科技' }, { code: '603881', name: '数据港' }, { code: '000938', name: '紫光股份' }] }
-        ]
-      },
-      {
-        name: '下游 需求应用',
-        children: [
-          { name: '通用AI应用', score: 85, logic: '大模型军备赛, Agent/生成式应用快速落地', barrier: '算法+数据+算力三重壁垒', stocks: [{ code: '688111', name: '金山办公' }, { code: '002230', name: '科大讯飞' }, { code: '300418', name: '昆仑万维' }] },
-          { name: '行业AI应用', score: 75, logic: '自动驾驶/工业AI/医疗AI多点开花', barrier: '行业know-how+数据积累', stocks: [{ code: '002920', name: '德赛西威' }, { code: '688208', name: '道通科技' }] }
-        ]
+    children: []
+  },
+
+  industryConfig: null,
+  currentIndustryId: 'ai_compute',
+
+  loadIndustryConfig: function (callback) {
+    if (S.industryConfig) {
+      if (callback) callback();
+      return;
+    }
+    fetch(S.apiUrl('industry/chain')).then(function (r) { return r.json(); }).then(function (d) {
+      var config = d;
+      if (d.success && d.data) config = d.data;
+      else if (d.industries) config = d;
+      S.industryConfig = config;
+      S.convertIndustryConfig();
+      if (callback) callback();
+    }).catch(function (e) {
+      console.error('industry config load failed', e);
+      S.industryConfig = { industries: [] };
+      if (callback) callback();
+    });
+  },
+
+  convertIndustryConfig: function () {
+    var industries = (S.industryConfig && S.industryConfig.industries) || [];
+    if (industries.length === 0) return;
+    var ind = null;
+    for (var i = 0; i < industries.length; i++) {
+      if (industries[i].id === S.currentIndustryId) { ind = industries[i]; break; }
+    }
+    if (!ind) ind = industries[0];
+    if (!ind || !ind.nodes) return;
+
+    var map = {};
+    for (var i = 0; i < ind.nodes.length; i++) {
+      map[ind.nodes[i].id] = ind.nodes[i];
+    }
+
+    function buildTree(node) {
+      var children = [];
+      var childIds = node.children || [];
+      for (var i = 0; i < childIds.length; i++) {
+        var child = map[childIds[i]];
+        if (child) children.push(buildTree(child));
       }
-    ]
+      var r = {
+        id: node.id,
+        name: node.name,
+        score: node.boom_score || 0,
+        logic: node.logic || '',
+        barrier: node.barrier || '',
+        stocks: node.stocks || [],
+        news: node.news || [],
+        children: children
+      };
+      return r;
+    }
+
+    var root = null;
+    for (var i = 0; i < ind.nodes.length; i++) {
+      if (!ind.nodes[i].parent_id || ind.nodes[i].level === 'root') { root = ind.nodes[i]; break; }
+    }
+    if (!root) root = ind.nodes[0];
+
+    S.chainData = buildTree(root);
+    S.chainData.name = ind.name;
+    S.chainData.score = ind.boom_score || S.chainData.score;
   },
 
   currentChainView: 'sankey',
 
   renderIndustryChain: function () {
-    S.renderIndustryList();
-    S.switchChainView('sankey');
+    S.loadIndustryConfig(function () {
+      S.renderIndustryList();
+      S.switchChainView('sankey');
+    });
   },
 
   renderIndustryList: function () {
     var el = document.getElementById('industryList');
     if (!el) return;
-    el.innerHTML = '<div class="industry-item active" data-ind="chain" onclick="S.selectIndustry(\'chain\')">' +
-      '<div style="font-size:var(--text-sm);font-weight:600">AI算力产业链</div>' +
-      '<div class="text-xs" style="color:var(--down);margin-top:2px">景气 82</div>' +
-      '</div>';
+    var industries = (S.industryConfig && S.industryConfig.industries) || [];
+    if (industries.length === 0) {
+      el.innerHTML = '<div class="industry-item active" data-ind="ai_compute" onclick="S.selectIndustry(\'ai_compute\')">' +
+        '<div style="font-size:var(--text-sm);font-weight:600">AI算力产业链</div>' +
+        '<div class="text-xs" style="color:var(--down);margin-top:2px">景气 82</div>' +
+        '</div>';
+      return;
+    }
+    var h = '';
+    for (var i = 0; i < industries.length; i++) {
+      var ind = industries[i];
+      var active = ind.id === S.currentIndustryId ? ' active' : '';
+      var sc = ind.boom_score || 0;
+      var c = sc >= 70 ? 'var(--down)' : sc >= 40 ? 'var(--warn)' : 'var(--up)';
+      h += '<div class="industry-item' + active + '" data-ind="' + ind.id + '" onclick="S.selectIndustry(\'' + ind.id + '\')">' +
+        '<div style="font-size:var(--text-sm);font-weight:600">' + UI.escape(ind.name) + '</div>' +
+        '<div class="text-xs" style="color:' + c + ';margin-top:2px">景气 ' + sc + '</div>' +
+        '</div>';
+    }
+    el.innerHTML = h;
   },
 
   selectIndustry: function (id) {
+    S.currentIndustryId = id;
+    S.convertIndustryConfig();
     document.querySelectorAll('.industry-item').forEach(function (el) { el.classList.remove('active'); });
     var sel = document.querySelector('.industry-item[data-ind="' + id + '"]');
     if (sel) sel.classList.add('active');

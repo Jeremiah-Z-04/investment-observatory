@@ -766,5 +766,18 @@ class RS(http.server.ThreadingHTTPServer):
 dataservice.start()
 
 if __name__ == "__main__":
-    import os; open(os.path.join(DIR,"server_ready.log"),"w").write("ready")
+    import os
+    open(os.path.join(DIR,"server_ready.log"),"w").write("ready")
+
+    # Initialize Supabase connection on server startup
+    if supabase_service:
+        try:
+            ok = supabase_service.init_supabase()
+            if ok:
+                print("[server] Supabase connected successfully")
+            else:
+                print("[server] Supabase not available, history features disabled")
+        except Exception as e:
+            print("[server] Supabase init failed: " + str(e))
+
     RS(("127.0.0.1",PORT),H).serve_forever()

@@ -45,3 +45,7 @@ Thumbs.db
 
 # Supabase
 .env
+
+# Project temp / session files
+.gstack/
+*.pid

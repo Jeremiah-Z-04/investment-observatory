@@ -9,6 +9,7 @@ print("[build] Starting...")
 
 # Import and run a shortened fetch
 import dataservice
+import utils
 
 # Quick fetch: just call unified_refresh once
 try:
@@ -48,12 +49,7 @@ try:
         if key == "limit_up_down":
             sdata = _get_stocks()
             if sdata:
-                up = sum(1 for s in sdata if float(s.get("change",0) or 0) >= 9.5)
-                dn = sum(1 for s in sdata if float(s.get("change",0) or 0) <= -9.5)
-                rise = sum(1 for s in sdata if float(s.get("change",0) or 0) > 0)
-                fall = sum(1 for s in sdata if float(s.get("change",0) or 0) < 0)
-                ta = sum(float(s.get("amount",0) or 0) for s in sdata) / 1e8
-                v = {"limitUp": up, "limitDown": dn, "limit_up_count": up, "limit_down_count": dn, "up_count": rise, "down_count": fall, "riseCount": rise, "fallCount": fall, "turnover_total": round(ta, 1), "bomb_rate": 0, "bomb_count": 0, "brokenRatio": 0, "yest_premium": 0, "max_board_height": 0}
+                v = utils.calc_market_stats(sdata)
                 cache.set("limit_up_down", v, "limit_up_down")
                 return v
         return {}

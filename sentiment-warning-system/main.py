@@ -200,6 +200,10 @@ class Handler(BaseHTTPRequestHandler):
     def serve_static(self, path):
         if path == "/": path = "/index.html"
         fp = os.path.join(ROOT, path.lstrip("/"))
+        # Path traversal protection
+        fp = os.path.realpath(fp)
+        if not fp.startswith(os.path.realpath(ROOT) + os.sep) and fp != os.path.realpath(ROOT):
+            self.js({"error": "forbidden"}, 403); return
         if not os.path.isfile(fp):
             self.js({"error": "not found"}, 404); return
         ext = os.path.splitext(fp)[1].lower()

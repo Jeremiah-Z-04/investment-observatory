@@ -41,8 +41,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "产能利用率高位运行，关键材料供给偏紧",
       "trend": "--",
       "core_driver": "--"
      }
@@ -82,10 +82,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "AI???????5kW/?????50kW+,??/UPS?????????",
-      "trend": "??3??????",
-      "core_driver": "GB200?????140kW,??????15%?60%??"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -123,10 +123,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "HBM3e/WLO????????????????,???????",
-      "trend": "HBM?????2025??",
-      "core_driver": "AI??HBM????80GB?144GB??,?????1.8"
+      "status": "轻度紧缺",
+      "reason": "产能利用率高位运行，关键材料供给偏紧",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -164,10 +164,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "ASML EUV???????50?,??/????????14-18??",
-      "trend": "2025???????????",
-      "core_driver": "?????2024-2026?????4000???,??????"
+      "status": "轻度紧缺",
+      "reason": "设备交期延长，产能扩张受限",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -205,10 +205,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "800G???DSP??/EML???????,?????????",
-      "trend": "??????,?????????",
-      "core_driver": "800G???2025???????3,?DSP???????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -228,8 +228,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "下游需求旺盛，产线满载运转",
       "trend": "--",
       "core_driver": "--"
      }
@@ -269,10 +269,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "AI???GPU???CoWoS????,???????????",
-      "trend": "CoWoS??????,???????",
-      "core_driver": "NVIDIA H100/B200???52????16?,?????"
+      "status": "轻度紧缺",
+      "reason": "下游需求旺盛，产线满载运转",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -306,10 +306,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "???????????200?,??????????",
-      "trend": "????,????????",
-      "core_driver": "?????+??????????????,??????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -329,8 +329,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "终端需求持续放量，传导至上游形成缺口",
       "trend": "--",
       "core_driver": "--"
      }
@@ -370,10 +370,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "??????200?,???????,API???????",
-      "trend": "??24?????????",
-      "core_driver": "Token???????90%+,??????????"
+      "status": "轻度紧缺",
+      "reason": "终端需求持续放量，传导至上游形成缺口",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -407,10 +407,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "AI???????????,??????????,??????",
-      "trend": "???????????",
-      "core_driver": "AI?????????,???????????"
+      "status": "轻度紧缺",
+      "reason": "终端需求持续放量，传导至上游形成缺口",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     }
    ]
@@ -456,8 +456,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "产能利用率高位运行，关键材料供给偏紧",
       "trend": "--",
       "core_driver": "--"
      }
@@ -489,10 +489,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "12???????????20%,????/SUMCO?????2026?",
-      "trend": "??????????2-3?",
-      "core_driver": "????????????85%,????????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -526,10 +526,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "ArF???/?????????????????",
-      "trend": "??????,??1-2??????????",
-      "core_driver": "??????????15%?30%?????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -563,10 +563,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "EUV???ASML????,??????????",
-      "trend": "????????????",
-      "core_driver": "??????????/CVD/???????????"
+      "status": "轻度紧缺",
+      "reason": "设备交期延长，产能扩张受限",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -596,10 +596,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "?????????Teradyne/Advantest,??????????",
-      "trend": "2-3??????????30%",
-      "core_driver": "?????????????,????????"
+      "status": "轻度紧缺",
+      "reason": "设备交期延长，产能扩张受限",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -619,8 +619,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "下游需求旺盛，产线满载运转",
       "trend": "--",
       "core_driver": "--"
      }
@@ -652,10 +652,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "??????????????,??AI????????",
-      "trend": "AI?????,?????",
-      "core_driver": "AI????5nm/3nm??,28nm????????????75%"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -685,10 +685,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "CoWoS????????,??????????AI??????",
-      "trend": "??2025H2????????",
-      "core_driver": "AI??CoWoS????100%+,?????50%,??????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -709,8 +709,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "终端需求持续放量，传导至上游形成缺口",
       "trend": "--",
       "core_driver": "--"
      }
@@ -742,10 +742,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "AI????????,??GPU????,??????",
-      "trend": "????????",
-      "core_driver": "??????????,???????????"
+      "status": "轻度紧缺",
+      "reason": "国产替代加速，高端产能存在缺口",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -775,10 +775,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "MCU??????,????,Ti/ST???????",
-      "trend": "????,???AI?????",
-      "core_driver": "?????????,MCU????"
+      "status": "轻度紧缺",
+      "reason": "国产替代加速，高端产能存在缺口",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -808,10 +808,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "HBM3e?????/?????,DDR5??????????",
-      "trend": "HBM??,DDR5??",
-      "core_driver": "HBM???AI???????,???????????"
+      "status": "轻度紧缺",
+      "reason": "国产替代加速，高端产能存在缺口",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     }
    ]
@@ -857,8 +857,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "产能利用率高位运行，关键材料供给偏紧",
       "trend": "--",
       "core_driver": "--"
      }
@@ -894,10 +894,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "??????????????????,????????/??",
-      "trend": "??????,2-3?????",
-      "core_driver": "????????40+?????,??????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -931,10 +931,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "???????????????,????????????????",
-      "trend": "1-2????????",
-      "core_driver": "????????14-20????,????????m?"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -968,10 +968,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "???????/3D???????????,????????",
-      "trend": "?????????????",
-      "core_driver": "????????????????????????5-10?"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -997,10 +997,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????????,??????????????????????",
-      "trend": "?????,??????",
-      "core_driver": "??????????????????,????????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -1020,8 +1020,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "下游需求旺盛，产线满载运转",
       "trend": "--",
       "core_driver": "--"
      }
@@ -1057,10 +1057,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "?????????,??10+????????,????????",
-      "trend": "2025??????????",
-      "core_driver": "TeslaOptimus/Figure/???????????2025-2026"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -1090,10 +1090,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "??AI??+????????????,???????",
-      "trend": "??????",
-      "core_driver": "?????????????????????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -1113,8 +1113,8 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????",
+      "status": "轻度紧缺",
+      "reason": "终端需求持续放量，传导至上游形成缺口",
       "trend": "--",
       "core_driver": "--"
      }
@@ -1146,10 +1146,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "?????????????,???????????????",
-      "trend": "??????,????",
-      "core_driver": "?????????,??????????????ROI"
+      "status": "轻度紧缺",
+      "reason": "下游需求旺盛，产线满载运转",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     },
     {
@@ -1175,10 +1175,10 @@
      "update_time": "2026-07-09 23:03",
      "supply_gap": {
       "level": 66,
-      "status": "u8f7b_u5ea6_u7d27_u7f3a",
-      "reason": "????????????,?????,???????",
-      "trend": "???????",
-      "core_driver": "???????????????,????????"
+      "status": "轻度紧缺",
+      "reason": "供需格局需要进一步观察",
+      "trend": "短期紧缺格局或将延续",
+      "core_driver": "AI算力需求爆发驱动上游扩产，供给弹性有限"
      }
     }
    ]

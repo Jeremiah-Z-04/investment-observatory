@@ -1,5 +1,5 @@
-import http.server, os, json, time, urllib.request, ssl
-import dataservice, factors_engine, datetime, review_rules
+import http.server, os, json, time, urllib.request, urllib.parse, ssl
+import dataservice, factors_engine, datetime, review_rules, utils
 try:
     import supabase_service
 except ImportError:
@@ -11,8 +11,6 @@ MIME = {".html":"text/html",".js":"application/javascript",".css":"text/css",".j
 
 def _fetch(url, timeout=8):
     ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
     req = urllib.request.Request(url, headers={
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
         "Referer": "https://data.eastmoney.com/"
@@ -40,7 +38,7 @@ def fetch_market_indices():
                 tracked_chg = -1.27
             return [{"name":"\u4e0a\u8bc1\u6307\u6570","price":f"{sh_price:.2f}","change":sh_chg},{"name":"\u6df1\u8bc1\u6210\u6307","price":f"{sz_price:.2f}","change":sz_chg}], tracked_chg
     except Exception as e:
-        import datetime as _dt2; open(os.path.join(DIR,"server_error.log"),"a",encoding="utf-8").write(f"[{_dt2.datetime.now().strftime(chr(37)+chr(72)+chr(58)+chr(37)+chr(77)+chr(58)+chr(37)+chr(83))}] Index fetch failed: {e}\n")
+        import datetime as _dt2; open(os.path.join(DIR,"server_error.log"),"a",encoding="utf-8").write(f'[{_dt2.datetime.now().strftime("%H:%M:%S")}] Index fetch failed: {e}\n')
     return None, None
 
 def fetch_northbound_total():
@@ -57,7 +55,7 @@ def fetch_northbound_total():
             net += abs(float(parts[2]))/1e8 if len(parts)>2 else 0
         return round(net, 1) if net > 0 else 12.5
     except Exception as e:
-        import datetime as _dt2; open(os.path.join(DIR,"server_error.log"),"a",encoding="utf-8").write(f"[{_dt2.datetime.now().strftime(chr(37)+chr(72)+chr(58)+chr(37)+chr(77)+chr(58)+chr(37)+chr(83))}] Northbound failed: {e}\n")
+        import datetime as _dt2; open(os.path.join(DIR,"server_error.log"),"a",encoding="utf-8").write(f'[{_dt2.datetime.now().strftime("%H:%M:%S")}] Northbound failed: {e}\n')
     return 12.5
 
 def build_nb_sectors(nb_total):
@@ -148,7 +146,8 @@ class H(http.server.BaseHTTPRequestHandler):
         body = json.dumps(data, ensure_ascii=False).encode()
         self.send_response(status)
         self.send_header("Content-Type","application/json; charset=utf-8")
-        self.send_header("Access-Control-Allow-Origin","*")
+        self.send_header("Access-Control-Allow-Origin","http://localhost:8765")
+        self.send_header("X-Content-Type-Options","nosniff")
         self.send_header("Content-Length",str(len(body)))
         self.end_headers()
         self.wfile.write(body)
@@ -313,20 +312,7 @@ class H(http.server.BaseHTTPRequestHandler):
                                 if sc and sc.get("data"):
                                     sdata = sc["data"]
                                     if isinstance(sdata, list) and len(sdata) > 50:
-                                        up = sum(1 for s in sdata if float(s.get("change",0) or 0) >= 9.5)
-                                        dn = sum(1 for s in sdata if float(s.get("change",0) or 0) <= -9.5)
-                                        rise = sum(1 for s in sdata if float(s.get("change",0) or 0) > 0)
-                                        fall = sum(1 for s in sdata if float(s.get("change",0) or 0) < 0)
-                                        total_amt = sum(float(s.get("amount",0) or 0) for s in sdata) / 1e8
-                                        val = {
-                                            "limitUp": up, "limitDown": dn,
-                                            "limit_up_count": up, "limit_down_count": dn,
-                                            "up_count": rise, "down_count": fall,
-                                            "riseCount": rise, "fallCount": fall,
-                                            "turnover_total": round(total_amt, 1),
-                                            "bomb_rate": 0, "bomb_count": 0, "brokenRatio": 0,
-                                            "yest_premium": 0, "max_board_height": 0
-                                        }
+                                        val = utils.calc_market_stats(sdata)
                                         dataservice.cache.set("limit_up_down", val, "limit_up_down")
                                         return val
                             except:
@@ -344,8 +330,19 @@ class H(http.server.BaseHTTPRequestHandler):
                                     "sh_change": d.get("sh_change", 0)
                                 }
                                 return result
-                        # Handle sectors - return list
+                        # Handle sectors - realtime cache first, then snapshot fallback
                         if key == "sectors":
+                            _sc = dataservice.cache.get("sectors") or {}
+                            _list = _sc.get("list", []) if isinstance(_sc, dict) else []
+                            if _list:
+                                return _list
+                            # Fallback: use latest snapshot sectors data
+                            snap = dataservice.load_latest_snapshot()
+                            if snap:
+                                sdata = snap.get("data", snap)
+                                _snap_list = sdata.get("sectors", [])
+                                if isinstance(_snap_list, list) and _snap_list:
+                                    return _snap_list
                             return []
                         # Handle northbound
                         if key == "northbound":
@@ -431,7 +428,6 @@ class H(http.server.BaseHTTPRequestHandler):
                 except Exception:
                     self.js({"success":True,"data":{},"ts":ts})
             elif p == "/api/stock/search":
-                import urllib.parse
                 kw = urllib.parse.parse_qs(self.path.split("?")[1] if "?" in self.path else "").get("keyword", [""])[0]
                 if not kw:
                     self.js({"success":False,"error":"keyword required"})
@@ -567,39 +563,6 @@ class H(http.server.BaseHTTPRequestHandler):
                 self.serve_file(p)
         except Exception as e:
             self.js({"error":str(e)},500)
-    def _handle_stock_info(self):
-        """Return single stock info from cache (for 次日作战计划)"""
-        try:
-            from urllib.parse import urlparse, parse_qs
-            params = parse_qs(urlparse(self.path).query)
-            code = (params.get("code") or [""])[0]
-            if not code:
-                self.js({"success": False, "error": "code required"}, 400)
-                return
-            rs_data = dataservice.cache.get("review_stocks")
-            rs_list = ((rs_data or {}).get("data", {}) or {}).get("list", []) or []
-            stock = None
-            for s in rs_list:
-                if s.get("code", "") == code:
-                    stock = s
-                    break
-            if not stock:
-                sec_data = dataservice.cache.get("sectors")
-                sec_list = (sec_data or {}).get("data", []) or []
-                self.js({"success": True, "code": code, "found": False, "sectors": [s.get("sector","") for s in sec_list[:5]]})
-                return
-            self.js({
-                "success": True, "code": code, "found": True,
-                "name": stock.get("name", ""),
-                "price": stock.get("price", 0),
-                "change": stock.get("change", 0),
-                "amount": stock.get("amount", 0),
-                "sector": stock.get("sector", ""),
-                "turnover": stock.get("turnover", 0)
-            })
-        except Exception as e:
-            self.js({"success": False, "error": str(e)}, 500)
-
     def _calc_sentiment_phase(self, m):
         luc = m.get("limit_up_count", 0)
         ldc = m.get("limit_down_count", 0)
@@ -607,21 +570,21 @@ class H(http.server.BaseHTTPRequestHandler):
         prem = m.get("yest_premium", 0)
         mh = m.get("max_board_height", 0)
         if luc < 20 or ldc > 15 or (prem is not None and prem < -2):
-            return chr(20912)+chr(28857), chr(20111)+chr(38065)+chr(25928)+chr(24212)
+            return "冰点", "亏钱效应"
         if luc > 80 or (br > 30 and prem is not None and prem < 1):
-            return chr(39640)+chr(28526), chr(20111)+chr(38065)+chr(25928)+chr(24212)
+            return "高潮", "亏钱效应"
         if ldc > 10 or (prem is not None and prem < 0):
-            return chr(36864)+chr(28526), chr(20111)+chr(38065)+chr(25928)+chr(24212)
+            return "退潮", "亏钱效应"
         if luc > 50 and (prem is not None and prem > 3) and mh >= 4:
-            return chr(20027)+chr(21319), chr(36186)+chr(38065)+chr(25928)+chr(24212)
+            return "主升", "赚钱效应"
         if 25 <= luc <= 45 and prem is not None and 1 <= prem <= 3:
-            return chr(21551)+chr(21160), chr(36186)+chr(38065)+chr(25928)+chr(24212)
-        return chr(33391)+chr(24615)+chr(20998)+chr(27491), chr(20013)+chr(24615)
+            return "启动", "赚钱效应"
+        return "良性分歧", "中性"
 
     def _calc_trend_days(self):
         snapshots = getattr(dataservice, "_load_snapshots", lambda: {})()
         if not snapshots:
-            return 1, chr(36186)+chr(38065)+chr(25928)+chr(24212)
+            return 1, "赚钱效应"
         dates = sorted(snapshots.keys())
         recent = dates[-5:] if len(dates) >= 5 else dates
         pos_days = 0; neg_days = 0
@@ -636,8 +599,8 @@ class H(http.server.BaseHTTPRequestHandler):
             else:
                 break
         if pos_days > 0:
-            return pos_days, chr(36186)+chr(38065)+chr(25928)+chr(24212)
-        return max(neg_days, 1), chr(20111)+chr(38065)+chr(25928)+chr(24212)
+            return pos_days, "赚钱效应"
+        return max(neg_days, 1), "亏钱效应"
 
     def _handle_review_summary(self):
         try:
@@ -796,19 +759,6 @@ class H(http.server.BaseHTTPRequestHandler):
         except Exception as e:
             import traceback
             self.js({"success": False, "error": str(e)}, 500)
-    @staticmethod
-    def _fast_fetch(url, timeout=4):
-        import urllib.request as _ur
-        import ssl as _ssl
-        try:
-            _ctx = _ssl.create_default_context()
-            _ctx.check_hostname = False
-            _ctx.verify_mode = _ssl.CERT_NONE
-            _req = _ur.Request(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://data.eastmoney.com/"})
-            _resp = _ur.urlopen(_req, timeout=timeout, context=_ctx)
-            return json.loads(_resp.read().decode())
-        except:
-            return None
 
 class RS(http.server.ThreadingHTTPServer):
     allow_reuse_address = True
@@ -817,4 +767,4 @@ dataservice.start()
 
 if __name__ == "__main__":
     import os; open(os.path.join(DIR,"server_ready.log"),"w").write("ready")
-    RS(("0.0.0.0",PORT),H).serve_forever()
+    RS(("127.0.0.1",PORT),H).serve_forever()

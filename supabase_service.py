@@ -4,6 +4,13 @@
 import os, json, time
 import urllib.request, urllib.parse, ssl
 
+class SupabaseError(Exception):
+    """Raised on non-2xx Supabase responses; carries the HTTP status."""
+    def __init__(self, status, body=''):
+        self.status = status
+        self.body = (body or '')[:300]
+        super().__init__('HTTP %s: %s' % (status, self.body))
+
 class SupabaseClient:
     """Minimal Supabase REST API client using Python stdlib only"""
 
@@ -32,25 +39,55 @@ class SupabaseClient:
         try:
             resp = urllib.request.urlopen(req, timeout=10, context=self._ctx)
             raw = resp.read().decode('utf-8')
-            return json.loads(raw) if raw and resp.status != 204 else None
+            # 2xx = success. Writes (Prefer: return=minimal) return 204 w/ empty
+            # body -> True. Reads return JSON body. Non-2xx -> raise (caller retries).
+            if 200 <= resp.status < 300:
+                return json.loads(raw) if raw else True
+            raise SupabaseError(resp.status, raw)
+        except urllib.error.HTTPError as e:
+            try:
+                _b = e.read().decode('utf-8', 'ignore')[:300]
+            except Exception:
+                _b = ''
+            raise SupabaseError(e.code, _b)
         except Exception as e:
+            # network / timeout / ssl errors propagate so the caller can retry
             print('[supabase] request error: ' + str(e))
-            return None
+            raise
 
-    def insert(self, table, data, use_service=True):
-        if isinstance(data, list):
-            # Batch insert via POST with Prefer: return=minimal
-            return self._request('POST', table, data, use_service)
-        return self._request('POST', table, data, use_service)
+    def insert(self, table, data, use_service=True, max_retries=3):
+        """Insert one row or a batch. Retries on transient failures
+        (network errors and 5xx). Gives up immediately on 4xx (client
+        errors like RLS/schema issues won't be fixed by retrying)."""
+        last_err = None
+        for attempt in range(1, max_retries + 1):
+            try:
+                return self._request('POST', table, data, use_service)
+            except SupabaseError as e:
+                last_err = e
+                if 400 <= e.status < 500:
+                    print('[supabase] insert client error (no retry): %s' % e)
+                    return None
+                print('[supabase] insert 5xx, retry %d/%d: %s' % (attempt, max_retries, e))
+            except Exception as e:
+                last_err = e
+                print('[supabase] insert error, retry %d/%d: %s' % (attempt, max_retries, e))
+            if attempt < max_retries:
+                time.sleep(min(2 * attempt, 6))
+        print('[supabase] insert failed after %d attempts: %s' % (max_retries, last_err))
+        return None
 
-    def select(self, table, columns='*', filters=None, order=None, limit=100):
+    def select(self, table, columns='*', filters=None, order=None, limit=100, offset=None):
         query = table + '?select=' + urllib.parse.quote(columns)
         if filters:
             for k, v in filters.items():
                 query += '&' + urllib.parse.quote(k) + '=' + urllib.parse.quote(str(v))
         if order:
             query += '&order=' + urllib.parse.quote(order)
-        query += '&limit=' + str(limit)
+        if limit:
+            query += '&limit=' + str(limit)
+        if offset is not None:
+            query += '&offset=' + str(offset)
         return self._request('GET', query, use_service=False)
 
 
@@ -151,6 +188,62 @@ def init_supabase():
     return False
 
 
+# ====================== Auto-Cleanup (exceeding limit) ======================
+
+# Per-table limits and time columns.  Adjust these to control retention.
+CLEANUP_LIMITS = {
+    'factor_scores':    {'time_column': 'recorded_at',  'max_rows': 2000},
+    'volume_alerts':    {'time_column': 'alert_time',   'max_rows': 500},
+    'market_snapshots': {'time_column': 'snapshot_time','max_rows': 1000},
+    'sector_rankings':  {'time_column': 'recorded_at',  'max_rows': 1000},
+}
+CLEANUP_COOLDOWN = 3600         # at most one cleanup per table per hour
+_cleanup_timestamps = {}        # {table_name: last_run_epoch}
+
+def cleanup_table(table):
+    """Delete oldest rows when table exceeds its configured max_rows.
+    Skips if table is not in CLEANUP_LIMITS, Supabase unreachable, or
+    a cleanup was already performed within CLEANUP_COOLDOWN seconds."""
+    config = CLEANUP_LIMITS.get(table)
+    if not config:
+        return
+    now = time.time()
+    if _cleanup_timestamps.get(table, 0) + CLEANUP_COOLDOWN > now:
+        return                        # cooldown active – skip
+    if not is_available() or _supabase is None:
+        _cleanup_timestamps[table] = now
+        return
+
+    tc = config['time_column']
+    mx = config['max_rows']
+
+    try:
+        # Find the (mx)th newest row's timestamp – this is the cutoff.
+        candidates = _supabase.select(
+            table, columns=tc, order=tc + '.desc',
+            limit=1, offset=mx
+        )
+        if not candidates:
+            _cleanup_timestamps[table] = now
+            return                     # table hasn't reached the limit yet
+
+        cutoff = candidates[0].get(tc)
+        if not cutoff:
+            _cleanup_timestamps[table] = now
+            return
+
+        # Delete everything strictly older than the cutoff row.
+        _supabase._request(
+            'DELETE',
+            table + '?' + urllib.parse.quote(tc) + '=lt.' + urllib.parse.quote(str(cutoff)),
+            use_service=True
+        )
+        print('[supabase] cleanup %s: deleted rows before %s' % (table, cutoff))
+    except Exception as e:
+        print('[supabase] cleanup %s error: %s' % (table, e))
+    _cleanup_timestamps[table] = now
+
+
 # ====================== Sync Functions ======================
 
 def sync_factor_scores(composite, factors_list, outlook='neutral'):
@@ -170,7 +263,10 @@ def sync_factor_scores(composite, factors_list, outlook='neutral'):
             score = f.get('score', None)
             if fid in data and score is not None:
                 data[fid] = round(float(score), 2)
-        _supabase.insert('factor_scores', data)
+        if _supabase.insert('factor_scores', data) is None:
+            record_sync_result(False)
+            return False
+        cleanup_table('factor_scores')
         record_sync_result(True)
         return True
     except Exception as e:
@@ -201,7 +297,10 @@ def sync_volume_alerts(alert_list):
                 'trigger_time': str(a.get('trigger_time', ''))
             })
         if batch:
-            _supabase.insert('volume_alerts', batch)
+            if _supabase.insert('volume_alerts', batch) is None:
+                record_sync_result(False)
+                return False
+        cleanup_table('volume_alerts')
         record_sync_result(True)
         return True
     except Exception as e:
@@ -231,7 +330,10 @@ def sync_market_snapshot(market_data):
             'composite_score': market_data.get('composite_score'),
             'max_board_height': market_data.get('max_board_height')
         }
-        _supabase.insert('market_snapshots', data)
+        if _supabase.insert('market_snapshots', data) is None:
+            record_sync_result(False)
+            return False
+        cleanup_table('market_snapshots')
         record_sync_result(True)
         return True
     except Exception as e:
@@ -259,7 +361,10 @@ def sync_sector_rankings(sectors_list):
                 'stock_count': s.get('count')
             })
         if batch:
-            _supabase.insert('sector_rankings', batch)
+            if _supabase.insert('sector_rankings', batch) is None:
+                record_sync_result(False)
+                return False
+        cleanup_table('sector_rankings')
         record_sync_result(True)
         return True
     except Exception as e:

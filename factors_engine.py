@@ -52,12 +52,16 @@ def calc_sentiment(limit_data, market_overview):
 
 def calc_sector_momentum(sectors):
     if not sectors:
-        return None, {"status":"neutral","desc":"no data","scores":{}}
+        # No live sector data (e.g. outside trading hours). Return a neutral
+        # score so the stored factor_scores row is always complete instead of
+        # leaving the `sector` column NULL. Consistent with the all-null
+        # neutral_factors fallback used elsewhere in calc_all_factors.
+        return 50.0, {"status":"neutral","desc":"no live sector data, neutral score","scores":{}}
     scores = {}
     top5 = sectors[:5]
     fs = 60
     if top5:
-        avg = sum(abs(s.get("netInflow",0)) for s in top5) / len(top5)
+        avg = sum(abs(s.get("net_amount",0)) for s in top5) / len(top5)
         if avg > 1.0: fs = 85
         elif avg > 0.5: fs = 70
         elif avg > 0.1: fs = 55
@@ -129,8 +133,26 @@ def calc_chip_structure(limit_data, market_overview):
     else: st="weak"; d="Profit overhang, bears dominate next day"
     return ts, {"status":st,"desc":d,"detail":{"limitUpRatio":round(safe_div(lu,max(lu+ld,1)),2),"scores":scores}}
 
-def calc_overnight_info():
-    return 60, {"status":"neutral","desc":"No material overnight catalysts","detail":{"scores":{"info":60}}}
+def calc_overnight_info(sentiment_score=None, chip_score=None):
+    u"""Derive overnight expectation from intraday sentiment & chip signals.
+    No external APIs needed; fed by the other two live factor scores."""
+    s = sentiment_score if sentiment_score is not None else 50
+    c = chip_score if chip_score is not None else 50
+    ov = round(15 + s * 0.45 + c * 0.40, 1)
+    ov = min(95, max(20, ov))
+
+    if ov >= 75:
+        st, d = "bullish", "Strong sentiment + healthy chips, high overnight confidence"
+    elif ov >= 55:
+        st, d = "cautious_bull", "Positive bias, monitor overnight catalysts"
+    elif ov >= 40:
+        st, d = "neutral", "Balanced signals, await overnight developments"
+    elif ov >= 25:
+        st, d = "cautious_bear", "Weak signals, reduce overnight exposure"
+    else:
+        st, d = "bearish", "Multiple weak signals, avoid overnight positions"
+
+    return ov, {"status":st,"desc":d,"detail":{"scores":{"info":ov}}}
 
 
 def calc_daily_advice(composite, factors):
@@ -140,36 +162,34 @@ def calc_daily_advice(composite, factors):
         return None
     ss = [g("sentiment"), g("sector"), g("chip"), g("overnight")]
     if composite is None:
-        cd = chr(25968)+chr(25454)+chr(33719)+chr(21462)+chr(20013)
-        fb = chr(25968)+chr(25454)+chr(19981)+chr(20840)
+        cd = "数据获取中"
+        fb = "数据不全"
     elif composite >= 75:
-        cd = chr(22235)+chr(22240)+chr(23376)+chr(25315)
-        fb = chr(31105)+chr(27490)+chr(37325)+chr(21333)
+        cd = "四因子共振"
+        fb = "禁止重仓"
     elif composite >= 60:
-        cd = chr(24066)+chr(22330)+chr(20570)+chr(22810)
-        fb = chr(31105)+chr(27490)+chr(36861)+chr(39640)
+        cd = "市场做多"
+        fb = "禁止追高"
     elif composite >= 45:
-        cd = chr(24066)+chr(22330)+chr(20013)+chr(24615)+chr(20570)+chr(35880)
-        fb = chr(31105)+chr(27490)+chr(28385)+chr(20179)
+        cd = "市场中性偏谨慎"
+        fb = "禁止满仓"
     elif composite >= 30:
-        cd = chr(24773)+chr(32491)+chr(36208)+chr(24369)
-        fb = chr(31105)+chr(27490)+chr(24320)+chr(20179)
+        cd = "情绪走弱"
+        fb = "禁止开仓"
     else:
-        cd = chr(24066)+chr(22330)+chr(20912)+chr(28857)
-        fb = chr(32477)+chr(23545)+chr(31105)+chr(27490)
+        cd = "市场冰点"
+        fb = "绝对禁止"
     if ss[0] is not None and ss[0] < 40:
         if ss[0] < 20:
-            ct = chr(24773)+chr(32491)+chr(20912)+chr(28857)+chr(32422)+chr(26463)+chr(29983)+chr(25928)
+            ct = "情绪冰点约束生效"
         else:
-            ct = chr(24773)+chr(32491)+chr(32422)+chr(26463)+chr(29983)+chr(25928)
+            ct = "情绪约束生效"
         if ss[1] is not None and ss[1] < 40:
-            ct += chr(65292)+chr(26495)+chr(22359)+chr(32422)+chr(26463)+chr(21472)+chr(21152)
-        ct += chr(65292)+chr(23454)+chr(38469)+chr(20179)+chr(20301)+chr(38480)+chr(38477)+chr(38480)+chr(38477)+chr(20302)
+            ct += "、板块约束叠加"
+        ct += "、实际仓位限制降低"
     else:
-        ct = chr(24403)+chr(21069)+chr(26080)+chr(30828)+chr(32422)+chr(26463)+chr(29983)+chr(25928)
+        ct = "当前无硬约束生效"
     fa = {}
-    r = {}
-    open("_advice_part.py","w",encoding="utf-8").write('DONE')
     return {"core_action":cd,"forbidden":fb,"constraint_desc":ct,"factor_advice":fa}
 
 def calc_all_factors(cache_getter):
@@ -181,7 +201,7 @@ def calc_all_factors(cache_getter):
     s1s, s1d = calc_sentiment(limit_data, overview)
     s2s, s2d = calc_sector_momentum(sectors)
     s3s, s3d = calc_chip_structure(limit_data, overview)
-    s4s, s4d = calc_overnight_info()
+    s4s, s4d = calc_overnight_info(s1s, s3s)
     factors = [
         {"id":"sentiment","label":"sentiment_cycle","score":s1s,"detail":s1d},
         {"id":"sector","label":"sector_momentum","score":s2s,"detail":s2d},
